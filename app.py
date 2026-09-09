@@ -66,7 +66,10 @@ def parse_csv_upload(uploaded_file):
     return reviews
 
 
-@app.route("/api/analyze-single", methods=["POST"])
+@app.route("/api/analyze-single", methods=["GET", "POST"])
+@app.route("/analyze-single", methods=["GET", "POST"])
+@app.route("/api/analyze_single", methods=["GET", "POST"])
+@app.route("/api/analyze_single.py", methods=["GET", "POST"])
 def api_analyze_single():
     """Instant reactive single-review analyzer endpoint."""
     data = request.get_json(silent=True) or request.form
@@ -86,6 +89,8 @@ def api_analyze_single():
 @app.route("/api/analyze.py", methods=["GET", "POST"])
 def index():
     """Show input page on GET, or analyze reviews on POST."""
+    if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
+        return api_analyze_single()
     if request.method == "POST":
         return analyze()
     intel_data = get_default_intelligence()

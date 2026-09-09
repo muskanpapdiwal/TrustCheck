@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/analyze-single",
+      "destination": "/api/analyze_single.py"
+    },
+    {
+      "source": "/analyze-single",
+      "destination": "/api/analyze_single.py"
+    },
+    {
       "source": "/analyze",
       "destination": "/api/analyze.py"
     },
