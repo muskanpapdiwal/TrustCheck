@@ -67,21 +67,20 @@ def parse_csv_upload(uploaded_file):
     return reviews
 
 
-@app.route("/", methods=["GET"])
-@app.route("/api/index", methods=["GET"])
-@app.route("/api/index.py", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
+@app.route("/analyze", methods=["GET", "POST"])
+@app.route("/api/index", methods=["GET", "POST"])
+@app.route("/api/index.py", methods=["GET", "POST"])
+@app.route("/api/analyze", methods=["GET", "POST"])
+@app.route("/api/analyze.py", methods=["GET", "POST"])
 def index():
-    """Show the input page: URL tab or paste/upload tab."""
+    """Show input page on GET, or analyze reviews on POST."""
+    if request.method == "POST":
+        return analyze()
     return render_template("index.html")
 
 
-
-@app.route("/analyze", methods=["GET", "POST"])
-@app.route("/api/index/analyze", methods=["GET", "POST"])
-@app.route("/api/index.py/analyze", methods=["GET", "POST"])
 def analyze():
-    if request.method == "GET":
-        return redirect(url_for("index"))
 
     input_mode = request.form.get("input_mode", "manual")
     platform_avg_rating_override = None
