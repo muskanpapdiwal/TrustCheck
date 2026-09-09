@@ -1,23 +1,21 @@
 /**
- * bg-network.js - animated "data network" canvas background.
+ * bg-network.js - Subtle cybernetic particle constellation canvas background.
  *
- * An original looping animation (not a video file): a field of drifting
- * dots that draw a thin connecting line to nearby neighbors, in the brand
- * blue at low opacity. Gives the "something alive is happening behind the
- * page" feel of a hero background video, fully self-contained (no asset
- * to host, no licensing concerns, tiny footprint).
+ * An original lightweight ambient canvas mesh: floating micro-nodes with
+ * proximity line rendering using indigo (#6366f1) and cyan (#06b6d4) hues
+ * at low opacity. Designed for minimal CPU overhead.
  *
- * Respects prefers-reduced-motion: renders one static frame instead of
- * looping.
+ * Respects prefers-reduced-motion.
  */
 (function () {
   var canvas = document.getElementById("bgCanvas");
   if (!canvas || !canvas.getContext) return;
   var ctx = canvas.getContext("2d");
 
-  var PARTICLE_COUNT = 60;
-  var MAX_LINK_DISTANCE = 130;
-  var BRAND_RGB = "0, 71, 171"; // matches --brand: #0047ab
+  var PARTICLE_COUNT = 48;
+  var MAX_LINK_DISTANCE = 120;
+  var COLOR_INDIGO = "99, 102, 241"; // #6366f1
+  var COLOR_CYAN = "6, 182, 212";   // #06b6d4
 
   var reduceMotion = window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -32,11 +30,14 @@
   function initParticles() {
     particles = [];
     for (var i = 0; i < PARTICLE_COUNT; i++) {
+      var isCyan = Math.random() > 0.65;
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        radius: Math.random() * 1.5 + 1,
+        color: isCyan ? COLOR_CYAN : COLOR_INDIGO,
       });
     }
   }
@@ -54,15 +55,16 @@
       }
     }
 
+    // Connect close neighbors
     for (var i = 0; i < particles.length; i++) {
       for (var j = i + 1; j < particles.length; j++) {
         var a = particles[i], b = particles[j];
         var dx = a.x - b.x, dy = a.y - b.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < MAX_LINK_DISTANCE) {
-          var opacity = (1 - dist / MAX_LINK_DISTANCE) * 0.14;
-          ctx.strokeStyle = "rgba(" + BRAND_RGB + ", " + opacity + ")";
-          ctx.lineWidth = 1;
+          var alpha = (1 - dist / MAX_LINK_DISTANCE) * 0.10;
+          ctx.strokeStyle = "rgba(" + COLOR_INDIGO + ", " + alpha + ")";
+          ctx.lineWidth = 0.85;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -71,11 +73,12 @@
       }
     }
 
+    // Render node points
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
-      ctx.fillStyle = "rgba(" + BRAND_RGB + ", 0.3)";
+      ctx.fillStyle = "rgba(" + p.color + ", 0.35)";
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -91,3 +94,4 @@
   initParticles();
   step();
 })();
+

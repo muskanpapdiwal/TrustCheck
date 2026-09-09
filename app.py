@@ -9,15 +9,14 @@ Routes:
 """
 
 import io
+import os
 
 import pandas as pd
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
 
-from analyzer import build_dashboard_data
+from analyzer import build_dashboard_data, explain_review, get_default_intelligence
 from predictor import predict_reviews_batch
 from scraper import scrape_product_reviews
-
-import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -67,6 +66,18 @@ def parse_csv_upload(uploaded_file):
     return reviews
 
 
+@app.route("/api/analyze-single", methods=["POST"])
+def api_analyze_single():
+    """Instant reactive single-review analyzer endpoint."""
+    data = request.get_json(silent=True) or request.form
+    text = (data.get("text") or "").strip() if data else ""
+    if not text:
+        return jsonify({"error": "No review text provided."}), 400
+
+    forensics = explain_review(text)
+    return jsonify(forensics)
+
+
 @app.route("/", methods=["GET", "POST"])
 @app.route("/analyze", methods=["GET", "POST"])
 @app.route("/api/index", methods=["GET", "POST"])
@@ -77,7 +88,8 @@ def index():
     """Show input page on GET, or analyze reviews on POST."""
     if request.method == "POST":
         return analyze()
-    return render_template("index.html")
+    intel_data = get_default_intelligence()
+    return render_template("index.html", intel=intel_data, intelligence=intel_data)
 
 
 def analyze():
@@ -133,7 +145,7 @@ def analyze():
     ]
 
     dashboard_data = build_dashboard_data(reviews, platform_avg_rating_override)
-    return render_template("dashboard.html", data=dashboard_data)
+    return render_template("dashboard.html", data=dashboard_data, intelligence=get_default_intelligence())
 
 
 if __name__ == "__main__":
