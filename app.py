@@ -65,8 +65,11 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/analyze", methods=["POST"])
+@app.route("/analyze", methods=["GET", "POST"])
 def analyze():
+    if request.method == "GET":
+        return redirect(url_for("index"))
+
     input_mode = request.form.get("input_mode", "manual")
     platform_avg_rating_override = None
 
