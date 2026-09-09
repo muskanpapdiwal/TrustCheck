@@ -75,21 +75,6 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/debug-info")
-@app.route("/api/index/debug-info")
-@app.route("/api/index.py/debug-info")
-def debug_info():
-    from flask import jsonify
-    return jsonify({
-        "PATH_INFO": request.environ.get("PATH_INFO"),
-        "RAW_URI": request.environ.get("RAW_URI"),
-        "REQUEST_URI": request.environ.get("REQUEST_URI"),
-        "QUERY_STRING": request.environ.get("QUERY_STRING"),
-        "x-matched-path": request.headers.get("x-matched-path"),
-        "x-forwarded-uri": request.headers.get("x-forwarded-uri"),
-        "x-now-route-matches": request.headers.get("x-now-route-matches"),
-    })
-
 
 @app.route("/analyze", methods=["GET", "POST"])
 @app.route("/api/index/analyze", methods=["GET", "POST"])
