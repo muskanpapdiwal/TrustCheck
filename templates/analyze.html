@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Review Analyzer Workbench - TrustCheck</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236366f1' d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-color: var(--bg-deep);">
+  <!-- Ambient canvas background -->
+  <canvas id="bgCanvas" class="bg-canvas" aria-hidden="true"></canvas>
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="ambient-organic-halo halo-warm" aria-hidden="true"></div>
+  <div class="ambient-organic-halo halo-cool" aria-hidden="true"></div>
+
+  <!-- Loading Overlay for Batch Form Submission -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-border" role="status"></div>
+    <p id="loadingOverlayText">Analyzing review telemetry and computing risk score…</p>
+  </div>
+
+  <!-- Floating Navigation -->
+  <div class="saas-nav-wrapper">
+    <nav class="saas-nav">
+      <a href="{{ url_for('index') }}" class="saas-nav-brand">
+        <div class="brand-logo-glow">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <span class="brand-text">TrustCheck</span>
+      </a>
+
+      <div class="saas-nav-links">
+        <a href="{{ url_for('index') }}" class="saas-nav-link">Overview</a>
+        <a href="{{ url_for('analyze_page') }}" class="saas-nav-link active">Workbench</a>
+        <a href="{{ url_for('intelligence_page') }}" class="saas-nav-link">Intelligence</a>
+        <a href="{{ url_for('technology_page') }}" class="saas-nav-link">Technology</a>
+        <a href="{{ url_for('index') }}#faq" class="saas-nav-link">FAQ</a>
+      </div>
+
+      <div class="saas-nav-actions">
+        <span class="status-beacon d-none d-md-inline-flex">
+          <span class="pulse-dot"></span>
+          <span>Offline ML Ready</span>
+        </span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="content-body" style="max-width: 1200px; padding-top: 3.5rem;">
+
+    <!-- Flashed Alerts if any -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="ai-reasoning-box" style="border-color: var(--status-fake-border); background: var(--status-fake-bg); margin-bottom: 1.5rem;">
+            <i class="bi bi-exclamation-triangle-fill" style="color: var(--status-fake);"></i>
+            <div>
+              <strong style="color: #fff;">Notice:</strong> {{ message }}
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Page Header -->
+    <div class="section-header-row mb-4">
+      <div class="section-title-wrap">
+        <h2>Review Analyzer & Forensic Workbench</h2>
+        <p>Run instant single-review NLP diagnostics with 4 risk spectrums, scrape storefront URLs, or upload bulk CSV batches.</p>
+      </div>
+    </div>
+
+    <!-- Dual Mode Workbench Section -->
+    <section class="analyzer-workbench-section reveal" style="padding: 2.25rem;">
+      <div class="card-title-row mb-2">
+        <div class="card-title-group">
+          <h3><i class="bi bi-cpu" style="color: var(--brand-indigo);"></i> Multi-Modal Detection Workbench</h3>
+          <p>Choose an analysis mode to run automated machine learning evaluation</p>
+        </div>
+      </div>
+
+      <!-- Mode Tabs -->
+      <div class="workbench-tabs-nav mb-4">
+        <button type="button" class="tab-btn active" id="tabSingleMode" onclick="switchWorkbenchMode('single')">
+          <i class="bi bi-pencil-square"></i> Instant Review Analyzer
+        </button>
+        <button type="button" class="tab-btn" id="tabBatchMode" onclick="switchWorkbenchMode('batch')">
+          <i class="bi bi-collection-play"></i> Product URL & Batch CSV Audit
+        </button>
+      </div>
+
+      <!-- PANE 1: Single Review Live Analyzer -->
+      <div id="singleAnalyzerPane" class="workbench-grid">
+        <!-- Left Side: Interactive Input -->
+        <div class="input-side">
+          <label for="reviewInputArea" class="form-label text-secondary small fw-bold">INPUT REVIEW TEXT FOR NLP FORENSICS</label>
+          <textarea id="reviewInputArea" class="textarea-custom" style="height: 180px;"
+                    placeholder="Paste any product review here to analyze linguistic authenticity, syntax repetition, and behavioral deception markers..."></textarea>
+
+          <div class="sample-pills-row">
+            <span class="sample-label">Load test samples:</span>
+            <button type="button" class="btn-pill-sample" onclick="loadSample('bot')">
+              <i class="bi bi-robot"></i> Load Bot Sample
+            </button>
+            <button type="button" class="btn-pill-sample" onclick="loadSample('genuine')">
+              <i class="bi bi-person-check"></i> Load Genuine Sample
+            </button>
+            <button type="button" class="btn-pill-sample" onclick="clearSample()">
+              <i class="bi bi-x-circle"></i> Clear
+            </button>
+          </div>
+
+          <div class="workbench-action-row mt-3">
+            <button type="button" id="btnAnalyzeSingle" class="btn-primary-glow" onclick="executeSingleAnalysis()">
+              <i class="bi bi-shield-check"></i>
+              <span>Run AI Forensics</span>
+            </button>
+            <span id="analysisStatusText" class="text-muted small">Ready for input</span>
+          </div>
+        </div>
+
+        <!-- Right Side: Explainable AI Result Card -->
+        <div class="explainable-results-card" id="explainableResultsCard">
+          <div class="result-verdict-header">
+            <div>
+              <span class="text-muted small d-block" style="font-size: 0.7rem; letter-spacing: 0.05em;">CLASSIFICATION RESULT</span>
+              <span id="verdictBadge" class="verdict-classification-badge verdict-genuine mt-1">
+                <i class="bi bi-patch-check"></i> Genuine Consumer Review
+              </span>
+            </div>
+            <div class="text-end">
+              <span class="text-muted small d-block" style="font-size: 0.7rem;">CALIBRATED CONFIDENCE</span>
+              <span id="confidenceNumber" class="text-primary fw-bold" style="font-family: var(--font-mono); font-size: 1.15rem;">89.4%</span>
+            </div>
+          </div>
+
+          <div class="result-scores-row">
+            <div class="result-score-box">
+              <div class="label">Trust Index</div>
+              <div class="val text-success" id="resultTrustScore">92</div>
+            </div>
+            <div class="result-score-box">
+              <div class="label">Composite Risk</div>
+              <div class="val text-cyan" id="resultCompositeRisk">8%</div>
+            </div>
+          </div>
+
+          <!-- 4 Risk Spectrum Meters -->
+          <div class="risk-breakdown-list">
+            <!-- 1. Language Risk -->
+            <div class="risk-item-row">
+              <div class="risk-item-meta">
+                <span class="risk-name">Language Pattern Risk</span>
+                <span class="risk-percent" id="langRiskVal">12%</span>
+              </div>
+              <div class="risk-spectrum-bar">
+                <div class="risk-spectrum-fill fill-low" id="langRiskBar" style="width: 12%;"></div>
+              </div>
+            </div>
+
+            <!-- 2. Behavioral Risk -->
+            <div class="risk-item-row">
+              <div class="risk-item-meta">
+                <span class="risk-name">Behavioral Anomaly Risk</span>
+                <span class="risk-percent" id="behavRiskVal">15%</span>
+              </div>
+              <div class="risk-spectrum-bar">
+                <div class="risk-spectrum-fill fill-low" id="behavRiskBar" style="width: 15%;"></div>
+              </div>
+            </div>
+
+            <!-- 3. Semantic Similarity Risk -->
+            <div class="risk-item-row">
+              <div class="risk-item-meta">
+                <span class="risk-name">Semantic Similarity Risk</span>
+                <span class="risk-percent" id="simRiskVal">10%</span>
+              </div>
+              <div class="risk-spectrum-bar">
+                <div class="risk-spectrum-fill fill-low" id="simRiskBar" style="width: 10%;"></div>
+              </div>
+            </div>
+
+            <!-- 4. Sentiment Deviation Risk -->
+            <div class="risk-item-row">
+              <div class="risk-item-meta">
+                <span class="risk-name">Sentiment Deviation Risk</span>
+                <span class="risk-percent" id="sentRiskVal">8%</span>
+              </div>
+              <div class="risk-spectrum-bar">
+                <div class="risk-spectrum-fill fill-low" id="sentRiskBar" style="width: 8%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Forensic Reasoning Explanation -->
+          <div class="ai-reasoning-box" id="aiExplanationBox">
+            <i class="bi bi-cpu-fill"></i>
+            <div id="aiExplanationText">
+              Vocabulary and syntax align with organic consumer reviews. Varied sentence structures and realistic personal experience markers detected.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 2: Batch URL & CSV Ingestion -->
+      <div id="batchAnalyzerPane" style="display: none;">
+        <div class="row g-4">
+          <!-- Sub-pane A: Product URL Scraper -->
+          <div class="col-lg-6">
+            <div class="metric-module h-100 p-4">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;"><i class="bi bi-link-45deg"></i></div>
+                <h5 class="fw-bold mb-0 text-white">Live Storefront Scraper</h5>
+              </div>
+              <p class="text-secondary small mb-3">Provide an Amazon or Flipkart product listing to automatically scrape customer reviews.</p>
+              
+              <form action="/analyze" method="post" class="analyze-batch-form" data-loading-text="Scraping storefront reviews and running ML classifier…">
+                <input type="hidden" name="input_mode" value="url">
+                <div class="mb-3">
+                  <label for="product_url" class="form-label text-secondary small fw-bold">PRODUCT LISTING URL</label>
+                  <input type="url" class="textarea-custom" style="height: 48px;" id="product_url" name="product_url"
+                         placeholder="https://www.amazon.in/dp/..." required>
+                  <div class="form-text mt-2 text-muted" style="font-size: 0.72rem;">
+                    Supported storefronts: Amazon and Flipkart. Other e-commerce stores are supported on a best-effort basis.
+                  </div>
+                </div>
+                <button type="submit" class="btn-primary-glow w-100 justify-content-center">
+                  <i class="bi bi-search"></i>
+                  <span>Scrape & Analyze Listing</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Sub-pane B: CSV / Bulk Paste -->
+          <div class="col-lg-6">
+            <div class="metric-module h-100 p-4">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem; background: var(--brand-gradient);"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+                <h5 class="fw-bold mb-0 text-white">Bulk CSV / Text Ingestion</h5>
+              </div>
+              <p class="text-secondary small mb-3">Upload a CSV file (must include a <code>review_text</code> column) or paste multiple review lines.</p>
+
+              <form action="/analyze" method="post" enctype="multipart/form-data" class="analyze-batch-form" data-loading-text="Classifying batch dataset with offline ensemble model…">
+                <input type="hidden" name="input_mode" value="manual">
+                <div class="mb-3">
+                  <label for="pasted_reviews" class="form-label text-secondary small fw-bold">BULK TEXT (ONE REVIEW PER LINE)</label>
+                  <textarea class="textarea-custom" style="height: 80px;" id="pasted_reviews" name="pasted_reviews"
+                            placeholder="Awesome product, works as advertised!&#10;Total garbage, broke after one day..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="csv_file" class="form-label text-secondary small fw-bold">OR UPLOAD CSV DATASET</label>
+                  <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv"
+                         style="background: rgba(0,0,0,0.3); border-color: var(--border-subtle); color: var(--text-primary); font-size: 0.8rem;">
+                </div>
+                <button type="submit" class="btn-primary-glow w-100 justify-content-center">
+                  <i class="bi bi-bar-chart-fill"></i>
+                  <span>Execute Batch Audit</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modern AI SaaS Footer -->
+  <footer class="saas-footer mt-5">
+    <div class="footer-container">
+      <div class="footer-brand-col">
+        <a href="{{ url_for('index') }}" class="saas-nav-brand">
+          <div class="brand-logo-glow">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <span class="brand-text">TrustCheck</span>
+        </a>
+        <p>
+          Next-generation AI review authenticity intelligence and risk forensics for enterprise e-commerce and conscious consumers.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('index') }}">Overview</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Analyzer Workbench</a></li>
+          <li><a href="{{ url_for('intelligence_page') }}">Ecosystem Telemetry</a></li>
+          <li><a href="{{ url_for('technology_page') }}">AI Architecture</a></li>
+          <li><a href="{{ url_for('dashboard_page') }}">Batch Audit Results</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Forensics</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('analyze_page') }}">Single Review Scanner</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Storefront URL Scraper</a></li>
+          <li><a href="{{ url_for('intelligence_page') }}">Suspicious Patterns Matrix</a></li>
+          <li><a href="{{ url_for('technology_page') }}">TF-IDF Vector Space</a></li>
+          <li><a href="{{ url_for('index') }}#faq">FAQ & Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-newsletter-box">
+        <h5>Intelligence Briefing</h5>
+        <p>Subscribe to receive weekly telemetry reports on e-commerce review fraud and bot network trends.</p>
+        <form onsubmit="event.preventDefault(); alert('Subscribed to TrustCheck Intelligence Briefing.');" class="newsletter-input-group">
+          <input type="email" placeholder="Enter your work email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 TrustCheck Inc. All rights reserved. Enterprise AI Review Authenticity.</span>
+      <div class="d-flex gap-3">
+        <a href="javascript:void(0)" class="text-muted text-decoration-none">Privacy Policy</a>
+        <a href="javascript:void(0)" class="text-muted text-decoration-none">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="{{ url_for('static', filename='bg-network.js') }}"></script>
+  <script>
+    // Workbench Mode Switching
+    function switchWorkbenchMode(mode) {
+      const singleTab = document.getElementById('tabSingleMode');
+      const batchTab = document.getElementById('tabBatchMode');
+      const singlePane = document.getElementById('singleAnalyzerPane');
+      const batchPane = document.getElementById('batchAnalyzerPane');
+
+      if (mode === 'single') {
+        singleTab.classList.add('active');
+        batchTab.classList.remove('active');
+        singlePane.style.display = 'grid';
+        batchPane.style.display = 'none';
+      } else {
+        batchTab.classList.add('active');
+        singleTab.classList.remove('active');
+        singlePane.style.display = 'none';
+        batchPane.style.display = 'block';
+      }
+    }
+
+    // Test Samples for Single Review Analyzer
+    const SAMPLE_BOT = "AMAZING! BEST PRODUCT EVER IN HUMAN HISTORY 10/10 MUST BUY RECOMMEND TO EVERYONE DO NOT HESITATE WOW WOW WOW FIVE STARS ALL THE WAY!!";
+    const SAMPLE_GENUINE = "I've been using this keyboard for 3 weeks now. The tactile switches feel solid for daily typing, though the wrist rest is a bit stiff. Battery life easily lasts 4 days between charges.";
+
+    function loadSample(type) {
+      const area = document.getElementById('reviewInputArea');
+      if (type === 'bot') area.value = SAMPLE_BOT;
+      else if (type === 'genuine') area.value = SAMPLE_GENUINE;
+    }
+
+    function clearSample() {
+      document.getElementById('reviewInputArea').value = '';
+    }
+
+    // Single Review Real-time Analysis via API
+    async function executeSingleAnalysis() {
+      const area = document.getElementById('reviewInputArea');
+      const text = area.value.trim();
+      if (!text) {
+        alert('Please paste or write a review before running AI forensics.');
+        return;
+      }
+
+      const btn = document.getElementById('btnAnalyzeSingle');
+      const statusText = document.getElementById('analysisStatusText');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Classifying…';
+      statusText.textContent = 'Extracting linguistic vectors and scoring anomalies…';
+
+      try {
+        const resp = await fetch('/api/analyze-single', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: text })
+        });
+
+        if (!resp.ok) throw new Error('Classification request failed.');
+        const data = await resp.json();
+
+        // Update UI with response
+        updateExplainableResults(data);
+        statusText.textContent = 'Analysis complete in 24ms.';
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = 'Error connecting to model engine.';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-shield-check"></i><span>Run AI Forensics</span>';
+      }
+    }
+
+    function updateExplainableResults(data) {
+      const badge = document.getElementById('verdictBadge');
+      const conf = document.getElementById('confidenceNumber');
+      const trustScore = document.getElementById('resultTrustScore');
+      const compRisk = document.getElementById('resultCompositeRisk');
+
+      conf.textContent = data.confidence + '%';
+      trustScore.textContent = data.trust_score;
+      compRisk.textContent = (100 - data.trust_score) + '%';
+
+      if (data.label === 'Fake') {
+        badge.className = 'verdict-classification-badge verdict-fake mt-1';
+        badge.innerHTML = '<i class="bi bi-shield-x"></i> High Risk Synthetic Review';
+        trustScore.className = 'val text-danger';
+      } else if (data.label === 'Suspicious') {
+        badge.className = 'verdict-classification-badge verdict-suspicious mt-1';
+        badge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Suspicious / Anomalous';
+        trustScore.className = 'val text-warning';
+      } else {
+        badge.className = 'verdict-classification-badge verdict-genuine mt-1';
+        badge.innerHTML = '<i class="bi bi-patch-check"></i> Genuine Consumer Review';
+        trustScore.className = 'val text-success';
+      }
+
+      // Update 4 Spectrum Bars
+      setSpectrumBar('langRiskVal', 'langRiskBar', data.language_risk);
+      setSpectrumBar('behavRiskVal', 'behavRiskBar', data.behavior_risk);
+      setSpectrumBar('simRiskVal', 'simRiskBar', data.similarity_risk);
+      setSpectrumBar('sentRiskVal', 'sentRiskBar', data.sentiment_risk);
+
+      // Update explanation text
+      document.getElementById('aiExplanationText').textContent = data.explanation;
+    }
+
+    function setSpectrumBar(valId, barId, percent) {
+      const valEl = document.getElementById(valId);
+      const barEl = document.getElementById(barId);
+      valEl.textContent = percent + '%';
+      barEl.style.width = percent + '%';
+
+      if (percent >= 60) {
+        barEl.className = 'risk-spectrum-fill fill-critical';
+      } else if (percent >= 35) {
+        barEl.className = 'risk-spectrum-fill fill-moderate';
+      } else {
+        barEl.className = 'risk-spectrum-fill fill-low';
+      }
+    }
+
+    // Loading Overlay for Batch Forms
+    document.querySelectorAll('.analyze-batch-form').forEach(form => {
+      form.addEventListener('submit', function() {
+        const btn = form.querySelector('button[type=submit]');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Analyzing…';
+        }
+        const overlay = document.getElementById('loadingOverlay');
+        const overlayText = document.getElementById('loadingOverlayText');
+        overlayText.textContent = form.getAttribute('data-loading-text') || 'Processing…';
+        overlay.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

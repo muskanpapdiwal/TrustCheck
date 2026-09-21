@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Ecosystem Threat Intelligence - TrustCheck</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236366f1' d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-color: var(--bg-deep);">
+  <!-- Ambient canvas background -->
+  <canvas id="bgCanvas" class="bg-canvas" aria-hidden="true"></canvas>
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="ambient-organic-halo halo-cool" aria-hidden="true"></div>
+  <div class="ambient-organic-halo halo-emerald" aria-hidden="true"></div>
+
+  <!-- Floating Navigation -->
+  <div class="saas-nav-wrapper">
+    <nav class="saas-nav">
+      <a href="{{ url_for('index') }}" class="saas-nav-brand">
+        <div class="brand-logo-glow">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <span class="brand-text">TrustCheck</span>
+      </a>
+
+      <div class="saas-nav-links">
+        <a href="{{ url_for('index') }}" class="saas-nav-link">Overview</a>
+        <a href="{{ url_for('analyze_page') }}" class="saas-nav-link">Workbench</a>
+        <a href="{{ url_for('intelligence_page') }}" class="saas-nav-link active">Intelligence</a>
+        <a href="{{ url_for('technology_page') }}" class="saas-nav-link">Technology</a>
+        <a href="{{ url_for('index') }}#faq" class="saas-nav-link">FAQ</a>
+      </div>
+
+      <div class="saas-nav-actions">
+        <a href="{{ url_for('analyze_page') }}" class="saas-nav-btn">
+          <i class="bi bi-plus-circle"></i>
+          <span>Analyze Review</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Content Body -->
+  <main class="content-body" style="max-width: 1200px; padding-top: 3.5rem;">
+
+    <!-- Section Header -->
+    <div class="section-header-row mb-4">
+      <div class="section-title-wrap">
+        <h2>Ecosystem Threat Intelligence & Telemetry</h2>
+        <p>Real-time cross-platform consumer review integrity index, live signals, and temporal manipulation patterns.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <span class="status-beacon">
+          <span class="pulse-dot"></span>
+          <span>Telemetry Stream Active</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- 4 Key Asymmetric Metrics -->
+    <section class="metrics-grid mb-4">
+      <!-- Metric 1: Total Analyzed -->
+      <div class="metric-module metric-primary reveal">
+        <div>
+          <div class="metric-header">
+            <span class="metric-label">Total Reviews Analyzed</span>
+            <div class="metric-icon-badge"><i class="bi bi-layers"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ "{:,}".format(intel.total_analyzed) }}</span>
+            <span class="metric-trend trend-up"><i class="bi bi-arrow-up-short"></i> +18.4%</span>
+          </div>
+        </div>
+        <div>
+          <div class="metric-footer">
+            <span>Multi-platform ingest</span>
+            <span>Active</span>
+          </div>
+          <div class="micro-bar-track">
+            <div class="micro-bar-fill" style="width: 85%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric 2: Suspicious Reviews -->
+      <div class="metric-module metric-warning reveal">
+        <div>
+          <div class="metric-header">
+            <span class="metric-label">Suspicious / Flagged</span>
+            <div class="metric-icon-badge"><i class="bi bi-exclamation-triangle"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ "{:,}".format(intel.suspicious_count) }}</span>
+            <span class="metric-trend trend-down"><i class="bi bi-shield-exclamation"></i> 10.0%</span>
+          </div>
+        </div>
+        <div>
+          <div class="metric-footer">
+            <span>Pattern anomaly threshold</span>
+            <span>Requires Audit</span>
+          </div>
+          <div class="micro-bar-track">
+            <div class="micro-bar-fill" style="width: 26%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric 3: Genuine Authentic -->
+      <div class="metric-module metric-success reveal">
+        <div>
+          <div class="metric-header">
+            <span class="metric-label">Verified Genuine</span>
+            <div class="metric-icon-badge"><i class="bi bi-patch-check"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ "{:,}".format(intel.genuine_count) }}</span>
+            <span class="metric-trend trend-up"><i class="bi bi-check-circle"></i> 81.2%</span>
+          </div>
+        </div>
+        <div>
+          <div class="metric-footer">
+            <span>Organic consumer consensus</span>
+            <span>Validated</span>
+          </div>
+          <div class="micro-bar-track">
+            <div class="micro-bar-fill" style="width: 81%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric 4: Trust Score -->
+      <div class="metric-module metric-cyan reveal">
+        <div>
+          <div class="metric-header">
+            <span class="metric-label">Overall Trust Index</span>
+            <div class="metric-icon-badge"><i class="bi bi-shield-lock"></i></div>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ intel.trust_score }}</span>
+            <span class="metric-trend trend-neutral">Grade A</span>
+          </div>
+        </div>
+        <div>
+          <div class="metric-footer">
+            <span>Calibrated confidence</span>
+            <span>Robust</span>
+          </div>
+          <div class="micro-bar-track">
+            <div class="micro-bar-fill" style="width: {{ intel.trust_score }}%;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Row: Primary Trust Centerpiece & AI Signals -->
+    <section class="bento-row mb-4">
+      <!-- Centerpiece: Radial Telemetry Dial -->
+      <div class="telemetry-card reveal">
+        <div class="card-title-row">
+          <div class="card-title-group">
+            <h3><i class="bi bi-shield-shaded" style="color: var(--brand-indigo);"></i> Authenticity Dial & Orbital Telemetry</h3>
+            <p>Synthesized algorithmic confidence score across 4 detection dimensions</p>
+          </div>
+          <span class="badge-dot" style="background: var(--brand-cyan);"></span>
+        </div>
+
+        <div class="telemetry-visual-body">
+          <!-- Radial Dial Gauge -->
+          <div class="dial-wrapper">
+            <svg class="dial-svg" viewBox="0 0 200 200">
+              <circle class="dial-bg" cx="100" cy="100" r="90"></circle>
+              <circle class="dial-meter-genuine" cx="100" cy="100" r="90"
+                      style="stroke-dasharray: 565; stroke-dashoffset: 106;"></circle>
+              <circle class="dial-meter-suspicious" cx="100" cy="100" r="74"
+                      style="stroke-dasharray: 465; stroke-dashoffset: 418;"></circle>
+              <circle class="dial-meter-fake" cx="100" cy="100" r="58"
+                      style="stroke-dasharray: 364; stroke-dashoffset: 331;"></circle>
+            </svg>
+
+            <div class="dial-center-content">
+              <span class="dial-score-number">{{ intel.trust_score }}</span>
+              <span class="dial-score-label">Trust Score</span>
+              <span class="dial-confidence-tag">91.4% Confidence</span>
+            </div>
+          </div>
+
+          <!-- Orbital Metrics & Natural Language Verdict -->
+          <div class="telemetry-breakdown">
+            <div class="telemetry-verdict-quote">
+              <strong style="color: #fff; display: block; margin-bottom: 2px;">Authenticity Verdict:</strong>
+              Review corpus displays organic consumer distribution. Detected anomalies are isolated to promotional flash spikes with negligible systemic manipulation.
+            </div>
+
+            <div class="orbital-stats-grid">
+              <div class="orbital-stat-box">
+                <div class="stat-box-indicator">
+                  <span class="indicator-dot dot-genuine"></span>
+                  <span>Authentic</span>
+                </div>
+                <span class="stat-box-val">81.2%</span>
+              </div>
+              <div class="orbital-stat-box">
+                <div class="stat-box-indicator">
+                  <span class="indicator-dot dot-suspicious"></span>
+                  <span>Suspicious</span>
+                </div>
+                <span class="stat-box-val">10.0%</span>
+              </div>
+              <div class="orbital-stat-box">
+                <div class="stat-box-indicator">
+                  <span class="indicator-dot dot-fake"></span>
+                  <span>High Risk</span>
+                </div>
+                <span class="stat-box-val">8.8%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Signals Feed -->
+      <div class="signals-card reveal">
+        <div class="card-title-row">
+          <div class="card-title-group">
+            <h3><i class="bi bi-broadcast" style="color: var(--brand-sky);"></i> Live AI Signals</h3>
+            <p>Forensic anomalies detected in recent telemetry</p>
+          </div>
+          <span class="badge-dot" style="background: var(--status-suspicious);"></span>
+        </div>
+
+        <div class="signals-list">
+          {% for signal in intel.signals %}
+          <div class="signal-item">
+            <div class="signal-meta">
+              <span class="severity-pill sev-{{ signal.severity }}">{{ signal.severity }}</span>
+              <span class="signal-time"><i class="bi bi-clock"></i> {{ signal.timestamp }}</span>
+            </div>
+            <div class="signal-text">{{ signal.title }}</div>
+            <button type="button" class="signal-action-btn" onclick="filterBySignal('{{ signal.type }}')">
+              <span>Inspect pattern</span>
+              <i class="bi bi-arrow-right-short"></i>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Activity Timeline & Suspicious Patterns Matrix -->
+    <section class="activity-patterns-row mb-4">
+      <!-- Left: Review Activity Timeline (Chart.js) -->
+      <div class="chart-module-card reveal">
+        <div class="card-title-row">
+          <div class="card-title-group">
+            <h3><i class="bi bi-graph-up" style="color: var(--brand-indigo);"></i> Review Activity Timeline</h3>
+            <p>Volume trends contrasting authentic consumer submissions against flagged anomalies</p>
+          </div>
+
+          <div class="chart-filter-pills">
+            <button type="button" class="chart-filter-btn active" onclick="updateChartPeriod(this, '7D')">7D</button>
+            <button type="button" class="chart-filter-btn" onclick="updateChartPeriod(this, '30D')">30D</button>
+            <button type="button" class="chart-filter-btn" onclick="updateChartPeriod(this, '90D')">90D</button>
+          </div>
+        </div>
+
+        <div class="chart-container-box">
+          <canvas id="activityChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Right: Suspicious Patterns Matrix -->
+      <div class="patterns-module-card reveal">
+        <div class="card-title-row">
+          <div class="card-title-group">
+            <h3><i class="bi bi-fingerprint" style="color: var(--brand-cyan);"></i> Suspicious Patterns Matrix</h3>
+            <p>Clustering telemetry across adversarial vectors</p>
+          </div>
+          <span class="badge-dot" style="background: var(--brand-cyan);"></span>
+        </div>
+
+        <div class="patterns-list">
+          {% for p in intel.suspicious_patterns %}
+          <div class="pattern-item-box">
+            <div class="pattern-info-group">
+              <span class="pattern-name">{{ p.name }}</span>
+              <span class="pattern-delta">{{ p.delta }}</span>
+            </div>
+            <div class="pattern-telemetry-badge">
+              <span class="pattern-count">{{ p.count }}</span>
+              <span class="risk-chip risk-{{ p.risk_level }}">{{ p.risk_level }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Reviews Stream Table -->
+    <section class="table-section-card reveal" id="recent-reviews">
+      <div class="card-title-row">
+        <div class="card-title-group">
+          <h3><i class="bi bi-table" style="color: var(--brand-indigo);"></i> Recent Reviews Stream</h3>
+          <p>Click any row to open deep forensic drawer inspection</p>
+        </div>
+
+        <div class="table-controls-row">
+          <div class="search-box me-2" style="width: 200px;">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" id="tableSearchInput" placeholder="Filter reviews...">
+          </div>
+          <div class="table-filter-group" id="tableFilterGroup">
+            <button type="button" class="btn-filter-tag active" data-filter="all" onclick="filterTable('all', this)">All ({{ intel.recent_reviews|length }})</button>
+            <button type="button" class="btn-filter-tag" data-filter="Genuine" onclick="filterTable('Genuine', this)">Genuine</button>
+            <button type="button" class="btn-filter-tag" data-filter="Suspicious" onclick="filterTable('Suspicious', this)">Suspicious</button>
+            <button type="button" class="btn-filter-tag" data-filter="Fake" onclick="filterTable('Fake', this)">High Risk</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive-wrapper">
+        <table class="intelligence-table">
+          <thead>
+            <tr>
+              <th style="width: 42%;">Review Content</th>
+              <th>Platform</th>
+              <th>Rating</th>
+              <th>Classification</th>
+              <th>Trust Score</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="reviewsTableBody">
+            {% for r in intel.recent_reviews %}
+            <tr class="review-table-row" data-label="{{ r.label }}" onclick="openReviewDrawer({{ loop.index0 }})">
+              <td class="review-snippet-cell">
+                <span class="review-snippet-text">{{ r.text }}</span>
+              </td>
+              <td>
+                <span class="platform-pill p-{{ r.platform.lower() }}">
+                  <i class="bi bi-shield"></i> {{ r.platform }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-bold text-white">{{ r.rating }}★</span>
+              </td>
+              <td>
+                {% if r.label == 'Genuine' %}
+                  <span class="verdict-classification-badge verdict-genuine" style="font-size: 0.72rem; padding: 2px 8px;">
+                    <i class="bi bi-check-circle"></i> Genuine
+                  </span>
+                {% elif r.label == 'Suspicious' %}
+                  <span class="verdict-classification-badge verdict-suspicious" style="font-size: 0.72rem; padding: 2px 8px;">
+                    <i class="bi bi-exclamation-triangle"></i> Suspicious
+                  </span>
+                {% else %}
+                  <span class="verdict-classification-badge verdict-fake" style="font-size: 0.72rem; padding: 2px 8px;">
+                    <i class="bi bi-shield-x"></i> High Risk
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="table-score-val">{{ r.trust_score }}</span>
+                <span class="text-muted small">/100</span>
+              </td>
+              <td>
+                <button type="button" class="btn-icon" style="width: 28px; height: 28px;" title="Inspect forensics">
+                  <i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Slide-Out Forensic Detail Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeReviewDrawer()"></div>
+  <aside class="review-detail-drawer" id="reviewDetailDrawer">
+    <div class="drawer-header">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-search" style="color: var(--brand-sky);"></i>
+        <h4>Review Forensic Inspection</h4>
+      </div>
+      <button type="button" class="btn-drawer-close" onclick="closeReviewDrawer()" title="Close drawer">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="d-flex align-items-center justify-content-between">
+        <span id="drawerVerdictBadge" class="verdict-classification-badge verdict-genuine">Genuine</span>
+        <span id="drawerPlatformTag" class="platform-pill p-amazon">Platform: Amazon</span>
+      </div>
+
+      <div class="drawer-section-block">
+        <h6>Raw Review Text</h6>
+        <div class="drawer-review-quote" id="drawerReviewText">
+          Loading review content...
+        </div>
+      </div>
+
+      <div class="drawer-section-block">
+        <h6>Risk Spectrum Telemetry</h6>
+        <div class="risk-breakdown-list">
+          <div class="risk-item-row">
+            <div class="risk-item-meta">
+              <span class="risk-name">Language Pattern Risk</span>
+              <span class="risk-percent" id="drawerLangRisk">0%</span>
+            </div>
+            <div class="risk-spectrum-bar">
+              <div class="risk-spectrum-fill fill-low" id="drawerLangBar" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="risk-item-row">
+            <div class="risk-item-meta">
+              <span class="risk-name">Behavioral Anomaly Risk</span>
+              <span class="risk-percent" id="drawerBehavRisk">0%</span>
+            </div>
+            <div class="risk-spectrum-bar">
+              <div class="risk-spectrum-fill fill-low" id="drawerBehavBar" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="risk-item-row">
+            <div class="risk-item-meta">
+              <span class="risk-name">Semantic Similarity Risk</span>
+              <span class="risk-percent" id="drawerSimRisk">0%</span>
+            </div>
+            <div class="risk-spectrum-bar">
+              <div class="risk-spectrum-fill fill-low" id="drawerSimBar" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="risk-item-row">
+            <div class="risk-item-meta">
+              <span class="risk-name">Sentiment Deviation Risk</span>
+              <span class="risk-percent" id="drawerSentRisk">0%</span>
+            </div>
+            <div class="risk-spectrum-bar">
+              <div class="risk-spectrum-fill fill-low" id="drawerSentBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-section-block">
+        <h6>Detected Linguistic Markers</h6>
+        <div class="drawer-signals-tags" id="drawerPatternTags">
+          <span class="signal-tag-pill">Personal Experience Marker</span>
+        </div>
+      </div>
+
+      <div class="drawer-section-block">
+        <h6>AI Explanation</h6>
+        <div class="ai-reasoning-box">
+          <i class="bi bi-info-circle"></i>
+          <span id="drawerExplanationText">Forensic evaluation indicates normal consumer sentence distribution.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="btn-pill-sample" onclick="exportReviewJson()">
+        <i class="bi bi-download"></i> Export JSON
+      </button>
+      <button type="button" class="btn-primary-glow" style="padding: 0.45rem 1.2rem; font-size: 0.8rem;" onclick="closeReviewDrawer()">
+        Done
+      </button>
+    </div>
+  </aside>
+
+  <!-- Modern AI SaaS Footer -->
+  <footer class="saas-footer mt-5">
+    <div class="footer-container">
+      <div class="footer-brand-col">
+        <a href="{{ url_for('index') }}" class="saas-nav-brand">
+          <div class="brand-logo-glow">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <span class="brand-text">TrustCheck</span>
+        </a>
+        <p>
+          Next-generation AI review authenticity intelligence and risk forensics for enterprise e-commerce and conscious consumers.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('index') }}">Overview</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Analyzer Workbench</a></li>
+          <li><a href="{{ url_for('intelligence_page') }}">Ecosystem Telemetry</a></li>
+          <li><a href="{{ url_for('technology_page') }}">AI Architecture</a></li>
+          <li><a href="{{ url_for('dashboard_page') }}">Batch Audit Results</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Forensics</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('analyze_page') }}">Single Review Scanner</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Storefront URL Scraper</a></li>
+          <li><a href="{{ url_for('intelligence_page') }}">Suspicious Patterns Matrix</a></li>
+          <li><a href="{{ url_for('technology_page') }}">TF-IDF Vector Space</a></li>
+          <li><a href="{{ url_for('index') }}#faq">FAQ & Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-newsletter-box">
+        <h5>Intelligence Briefing</h5>
+        <p>Subscribe to receive weekly telemetry reports on e-commerce review fraud and bot network trends.</p>
+        <form onsubmit="event.preventDefault(); alert('Subscribed to TrustCheck Intelligence Briefing.');" class="newsletter-input-group">
+          <input type="email" placeholder="Enter your work email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 TrustCheck Inc. All rights reserved. Enterprise AI Review Authenticity.</span>
+      <div class="d-flex gap-3">
+        <a href="javascript:void(0)" class="text-muted text-decoration-none">Privacy Policy</a>
+        <a href="javascript:void(0)" class="text-muted text-decoration-none">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='bg-network.js') }}"></script>
+  <script>
+    const RECENT_REVIEWS = {{ intel.recent_reviews | tojson }};
+    const TIMELINE_DATA = {{ intel.activity_timeline | tojson }};
+
+    // Chart.js Setup
+    let activityChart = null;
+    function initActivityChart() {
+      const ctx = document.getElementById('activityChart');
+      if (!ctx) return;
+
+      const labels = TIMELINE_DATA['7D'].labels;
+      const genuineData = TIMELINE_DATA['7D'].genuine;
+      const suspiciousData = TIMELINE_DATA['7D'].suspicious;
+
+      activityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Verified Genuine',
+              data: genuineData,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              borderWidth: 2.5,
+              tension: 0.38,
+              fill: true,
+              pointRadius: 4,
+              pointBackgroundColor: '#10b981',
+              pointHoverRadius: 6,
+            },
+            {
+              label: 'Flagged / Suspicious',
+              data: suspiciousData,
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.06)',
+              borderWidth: 2,
+              tension: 0.38,
+              fill: true,
+              pointRadius: 3,
+              pointBackgroundColor: '#ef4444',
+              pointHoverRadius: 6,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'end',
+              labels: {
+                color: '#94a3b8',
+                font: { family: 'Inter', size: 11, weight: 600 },
+                boxWidth: 12,
+                usePointStyle: true,
+                pointStyle: 'circle',
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.03)' },
+              ticks: { color: '#64748b', font: { family: 'Inter', size: 10 } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.03)' },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    function updateChartPeriod(btn, period) {
+      document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (activityChart && TIMELINE_DATA[period]) {
+        activityChart.data.labels = TIMELINE_DATA[period].labels;
+        activityChart.data.datasets[0].data = TIMELINE_DATA[period].genuine;
+        activityChart.data.datasets[1].data = TIMELINE_DATA[period].suspicious;
+        activityChart.update();
+      }
+    }
+
+    // Drawer Management
+    let currentDrawerIndex = 0;
+    function openReviewDrawer(index) {
+      currentDrawerIndex = index;
+      const review = RECENT_REVIEWS[index];
+      if (!review) return;
+
+      const drawer = document.getElementById('reviewDetailDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+
+      document.getElementById('drawerReviewText').textContent = review.text;
+      document.getElementById('drawerPlatformTag').textContent = 'Platform: ' + review.platform;
+      document.getElementById('drawerPlatformTag').className = 'platform-pill p-' + review.platform.toLowerCase();
+
+      const badge = document.getElementById('drawerVerdictBadge');
+      if (review.label === 'Fake') {
+        badge.className = 'verdict-classification-badge verdict-fake';
+        badge.innerHTML = '<i class="bi bi-shield-x"></i> High Risk Synthetic';
+      } else if (review.label === 'Suspicious') {
+        badge.className = 'verdict-classification-badge verdict-suspicious';
+        badge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Suspicious';
+      } else {
+        badge.className = 'verdict-classification-badge verdict-genuine';
+        badge.innerHTML = '<i class="bi bi-patch-check"></i> Genuine';
+      }
+
+      setSpectrumBar('drawerLangRisk', 'drawerLangBar', review.language_risk);
+      setSpectrumBar('drawerBehavRisk', 'drawerBehavBar', review.behavior_risk);
+      setSpectrumBar('drawerSimRisk', 'drawerSimBar', review.similarity_risk);
+      setSpectrumBar('drawerSentRisk', 'drawerSentBar', review.sentiment_risk);
+
+      const tagsContainer = document.getElementById('drawerPatternTags');
+      tagsContainer.innerHTML = '';
+      if (review.patterns && review.patterns.length > 0) {
+        review.patterns.forEach(tag => {
+          const span = document.createElement('span');
+          span.className = 'signal-tag-pill';
+          span.textContent = tag;
+          tagsContainer.appendChild(span);
+        });
+      } else {
+        const span = document.createElement('span');
+        span.className = 'signal-tag-pill';
+        span.textContent = 'Organic phrasing';
+        tagsContainer.appendChild(span);
+      }
+
+      document.getElementById('drawerExplanationText').textContent = review.explanation || 'Authentic review structure.';
+
+      drawer.classList.add('active');
+      backdrop.classList.add('active');
+    }
+
+    function closeReviewDrawer() {
+      document.getElementById('reviewDetailDrawer').classList.remove('active');
+      document.getElementById('drawerBackdrop').classList.remove('active');
+    }
+
+    function setSpectrumBar(valId, barId, percent) {
+      const valEl = document.getElementById(valId);
+      const barEl = document.getElementById(barId);
+      valEl.textContent = percent + '%';
+      barEl.style.width = percent + '%';
+
+      if (percent >= 60) {
+        barEl.className = 'risk-spectrum-fill fill-critical';
+      } else if (percent >= 35) {
+        barEl.className = 'risk-spectrum-fill fill-moderate';
+      } else {
+        barEl.className = 'risk-spectrum-fill fill-low';
+      }
+    }
+
+    function exportReviewJson() {
+      const review = RECENT_REVIEWS[currentDrawerIndex];
+      const blob = new Blob([JSON.stringify(review, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trustcheck-review-${currentDrawerIndex + 1}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function filterTable(filter, btn) {
+      document.querySelectorAll('#tableFilterGroup .btn-filter-tag').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.review-table-row').forEach(row => {
+        const label = row.getAttribute('data-label');
+        if (filter === 'all' || label === filter) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function filterBySignal(signalType) {
+      document.getElementById('recent-reviews').scrollIntoView({ behavior: 'smooth' });
+      const fakeBtn = document.querySelector('#tableFilterGroup [data-filter="Fake"]');
+      if (fakeBtn) fakeBtn.click();
+    }
+
+    document.getElementById('tableSearchInput').addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.review-table-row').forEach(row => {
+        const text = row.querySelector('.review-snippet-text').textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', initActivityChart);
+  </script>
+</body>
+</html>

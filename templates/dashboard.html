@@ -38,9 +38,22 @@
       <nav class="sidebar-menu">
         <span class="menu-category">Navigation</span>
         <a href="{{ url_for('index') }}" class="nav-link-custom">
-          <i class="bi bi-arrow-left-circle"></i>
-          <span>Live Workspace</span>
+          <i class="bi bi-house"></i>
+          <span>Overview</span>
         </a>
+        <a href="{{ url_for('analyze_page') }}" class="nav-link-custom">
+          <i class="bi bi-cpu"></i>
+          <span>Workbench</span>
+        </a>
+        <a href="{{ url_for('intelligence_page') }}" class="nav-link-custom">
+          <i class="bi bi-shield-shaded"></i>
+          <span>Intelligence</span>
+        </a>
+        <a href="{{ url_for('technology_page') }}" class="nav-link-custom">
+          <i class="bi bi-layers"></i>
+          <span>Technology</span>
+        </a>
+        <span class="menu-category mt-2">Current Batch Audit</span>
         <a href="#audit-overview" class="nav-link-custom active">
           <i class="bi bi-pie-chart-fill"></i>
           <span>Audit Overview</span>
@@ -60,7 +73,7 @@
       </nav>
 
       <div class="sidebar-footer">
-        <a href="{{ url_for('index') }}" class="btn-primary-glow text-center justify-content-center" style="font-size: 0.8rem; text-decoration: none;">
+        <a href="{{ url_for('analyze_page') }}" class="btn-primary-glow text-center justify-content-center" style="font-size: 0.8rem; text-decoration: none;">
           <i class="bi bi-plus-circle"></i> Analyze Another
         </a>
       </div>
@@ -83,8 +96,8 @@
         </div>
 
         <div class="topbar-actions">
-          <a href="{{ url_for('index') }}" class="btn-pill-sample" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem;">
-            <i class="bi bi-arrow-left"></i> Return to Live Dashboard
+          <a href="{{ url_for('analyze_page') }}" class="btn-pill-sample" style="text-decoration: none; padding: 6px 14px; font-size: 0.8rem;">
+            <i class="bi bi-arrow-left"></i> Return to Workbench
           </a>
         </div>
       </header>

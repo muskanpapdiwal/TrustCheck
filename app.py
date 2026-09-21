@@ -28,6 +28,23 @@ app = Flask(
 app.secret_key = "dev-only-secret-key-not-for-production"  # only used to flash form errors
 
 
+class VercelPathMiddleware:
+    """Ensure Vercel serverless functions route multi-page requests based on the actual requested URL."""
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        matched = environ.get("HTTP_X_MATCHED_PATH") or environ.get("HTTP_X_FORWARDED_URI")
+        if matched and not matched.startswith("/api/"):
+            environ["PATH_INFO"] = matched.split("?")[0]
+        elif environ.get("PATH_INFO") in ("/api/index", "/api/index.py"):
+            environ["PATH_INFO"] = "/"
+        return self.wsgi_app(environ, start_response)
+
+
+app.wsgi_app = VercelPathMiddleware(app.wsgi_app)
+
+
 def parse_pasted_text(pasted_reviews):
     """Freeform textarea input: one review per line, no rating info."""
     lines = [line.strip() for line in pasted_reviews.splitlines()]
@@ -81,24 +98,67 @@ def api_analyze_single():
     return jsonify(forensics)
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
+@app.route("/api/index", methods=["GET"])
+@app.route("/api/index.py", methods=["GET"])
+def index():
+    """AI SaaS Multi-Model Landing Page."""
+    if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
+        return api_analyze_single()
+    intel_data = get_default_intelligence()
+    return render_template("landing.html", intel=intel_data, intelligence=intel_data)
+
+
 @app.route("/analyze", methods=["GET", "POST"])
-@app.route("/api/index", methods=["GET", "POST"])
-@app.route("/api/index.py", methods=["GET", "POST"])
+@app.route("/workbench", methods=["GET", "POST"])
 @app.route("/api/analyze", methods=["GET", "POST"])
 @app.route("/api/analyze.py", methods=["GET", "POST"])
-def index():
-    """Show input page on GET, or analyze reviews on POST."""
+def analyze_page():
+    """Review Analyzer & Forensic Workbench (GET), or process batch review analysis (POST)."""
     if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
         return api_analyze_single()
     if request.method == "POST":
         return analyze()
     intel_data = get_default_intelligence()
-    return render_template("index.html", intel=intel_data, intelligence=intel_data)
+    return render_template("analyze.html", intel=intel_data, intelligence=intel_data)
+
+
+@app.route("/intelligence", methods=["GET"])
+@app.route("/threats", methods=["GET"])
+def intelligence_page():
+    """Ecosystem Threat Telemetry & Risk Signals Dashboard."""
+    intel_data = get_default_intelligence()
+    return render_template("intelligence.html", intel=intel_data, intelligence=intel_data)
+
+
+@app.route("/technology", methods=["GET"])
+@app.route("/how-it-works", methods=["GET"])
+@app.route("/architecture", methods=["GET"])
+def technology_page():
+    """AI Architecture & 6-Stage Forensic Pipeline Deep-Dive."""
+    intel_data = get_default_intelligence()
+    return render_template("technology.html", intel=intel_data, intelligence=intel_data)
+
+
+@app.route("/dashboard", methods=["GET"])
+def dashboard_page():
+    """Batch Audit Results View."""
+    intel_data = get_default_intelligence()
+    sample_reviews = [
+        {
+            "text": r["text"],
+            "rating": r.get("rating"),
+            "label": r.get("label", "Genuine"),
+            "raw_label": "OR",
+            "confidence": r.get("confidence", 90),
+        }
+        for r in intel_data["recent_reviews"]
+    ]
+    dashboard_data = build_dashboard_data(sample_reviews)
+    return render_template("dashboard.html", data=dashboard_data, intelligence=intel_data)
 
 
 def analyze():
-
     input_mode = request.form.get("input_mode", "manual")
     platform_avg_rating_override = None
 
@@ -107,11 +167,8 @@ def analyze():
         scrape_result = scrape_product_reviews(product_url)
 
         if not scrape_result["success"]:
-            # Scraping failed for any reason (blocked, JS-rendered, wrong
-            # URL, network error, etc.) - degrade gracefully to the manual
-            # input path instead of crashing or showing a blank page.
             flash(scrape_result["error"], "warning")
-            return redirect(url_for("index"))
+            return redirect(url_for("analyze_page"))
 
         raw_reviews = scrape_result["reviews"]
         platform_avg_rating_override = scrape_result["platform_avg_rating"]
@@ -126,14 +183,14 @@ def analyze():
                     "the file and try again.",
                     "danger",
                 )
-                return redirect(url_for("index"))
+                return redirect(url_for("analyze_page"))
         else:
             pasted_reviews = request.form.get("pasted_reviews", "")
             raw_reviews = parse_pasted_text(pasted_reviews)
 
     if not raw_reviews:
         flash("No reviews found - please paste some text or upload a CSV.", "danger")
-        return redirect(url_for("index"))
+        return redirect(url_for("analyze_page"))
 
     # Classify all reviews in one batched vectorize+predict call rather than
     # looping predict_review() per review - much faster for large review sets.
@@ -155,3 +212,4 @@ def analyze():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
