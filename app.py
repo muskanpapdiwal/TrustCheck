@@ -28,17 +28,25 @@ app = Flask(
 app.secret_key = "dev-only-secret-key-not-for-production"  # only used to flash form errors
 
 
+from urllib.parse import parse_qs, urlencode
+
 class VercelPathMiddleware:
     """Ensure Vercel serverless functions route multi-page requests based on the actual requested URL."""
     def __init__(self, wsgi_app):
         self.wsgi_app = wsgi_app
 
     def __call__(self, environ, start_response):
-        matched = environ.get("HTTP_X_MATCHED_PATH") or environ.get("HTTP_X_FORWARDED_URI")
-        if matched and not matched.startswith("/api/"):
-            environ["PATH_INFO"] = matched.split("?")[0]
-        elif environ.get("PATH_INFO") in ("/api/index", "/api/index.py"):
+        query_string = environ.get("QUERY_STRING", "")
+        params = parse_qs(query_string)
+
+        if "path" in params and params["path"][0]:
+            raw_path = params["path"][0]
+            environ["PATH_INFO"] = "/" + raw_path.lstrip("/")
+            remaining_params = {k: v for k, v in params.items() if k != "path"}
+            environ["QUERY_STRING"] = urlencode(remaining_params, doseq=True)
+        elif not environ.get("PATH_INFO") or environ.get("PATH_INFO") in ("/api/index", "/api/index.py"):
             environ["PATH_INFO"] = "/"
+
         return self.wsgi_app(environ, start_response)
 
 
