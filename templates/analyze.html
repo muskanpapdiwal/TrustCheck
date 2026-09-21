@@ -36,10 +36,9 @@
       </a>
 
       <div class="saas-nav-links">
-        <a href="{{ url_for('index') }}" class="saas-nav-link">Overview</a>
-        <a href="{{ url_for('analyze_page') }}" class="saas-nav-link active">Workbench</a>
-        <a href="{{ url_for('intelligence_page') }}" class="saas-nav-link">Intelligence</a>
-        <a href="{{ url_for('technology_page') }}" class="saas-nav-link">Technology</a>
+        <a href="{{ url_for('index') }}" class="saas-nav-link">Home</a>
+        <a href="{{ url_for('analyze_page') }}" class="saas-nav-link active">Analyze Reviews</a>
+        <a href="{{ url_for('index') }}#features" class="saas-nav-link">How It Works</a>
         <a href="{{ url_for('index') }}#faq" class="saas-nav-link">FAQ</a>
       </div>
 
@@ -274,8 +273,9 @@
   </main>
 
   <!-- Modern AI SaaS Footer -->
+  <!-- Modern AI SaaS Footer -->
   <footer class="saas-footer mt-5">
-    <div class="footer-container">
+    <div class="footer-container" style="grid-template-columns: 2fr 1fr 1fr;">
       <div class="footer-brand-col">
         <a href="{{ url_for('index') }}" class="saas-nav-brand">
           <div class="brand-logo-glow">
@@ -283,49 +283,31 @@
           </div>
           <span class="brand-text">TrustCheck</span>
         </a>
-        <p>
-          Next-generation AI review authenticity intelligence and risk forensics for enterprise e-commerce and conscious consumers.
-        </p>
+        <p>AI-powered fake review detection for e-commerce products.</p>
       </div>
 
       <div class="footer-col">
-        <h5>Platform</h5>
+        <h5>Navigation</h5>
         <ul class="footer-links">
-          <li><a href="{{ url_for('index') }}">Overview</a></li>
-          <li><a href="{{ url_for('analyze_page') }}">Analyzer Workbench</a></li>
-          <li><a href="{{ url_for('intelligence_page') }}">Ecosystem Telemetry</a></li>
-          <li><a href="{{ url_for('technology_page') }}">AI Architecture</a></li>
-          <li><a href="{{ url_for('dashboard_page') }}">Batch Audit Results</a></li>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Analyze Reviews</a></li>
+          <li><a href="{{ url_for('index') }}#features">How It Works</a></li>
+          <li><a href="{{ url_for('index') }}#faq">FAQ</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h5>Forensics</h5>
+        <h5>Tools</h5>
         <ul class="footer-links">
-          <li><a href="{{ url_for('analyze_page') }}">Single Review Scanner</a></li>
-          <li><a href="{{ url_for('analyze_page') }}">Storefront URL Scraper</a></li>
-          <li><a href="{{ url_for('intelligence_page') }}">Suspicious Patterns Matrix</a></li>
-          <li><a href="{{ url_for('technology_page') }}">TF-IDF Vector Space</a></li>
-          <li><a href="{{ url_for('index') }}#faq">FAQ & Support</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Product Link Scraper</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">CSV Batch Upload</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Single Review Test</a></li>
         </ul>
-      </div>
-
-      <div class="footer-col footer-newsletter-box">
-        <h5>Intelligence Briefing</h5>
-        <p>Subscribe to receive weekly telemetry reports on e-commerce review fraud and bot network trends.</p>
-        <form onsubmit="event.preventDefault(); alert('Subscribed to TrustCheck Intelligence Briefing.');" class="newsletter-input-group">
-          <input type="email" placeholder="Enter your work email" required>
-          <button type="submit">Subscribe</button>
-        </form>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <span>© 2026 TrustCheck Inc. All rights reserved. Enterprise AI Review Authenticity.</span>
-      <div class="d-flex gap-3">
-        <a href="javascript:void(0)" class="text-muted text-decoration-none">Privacy Policy</a>
-        <a href="javascript:void(0)" class="text-muted text-decoration-none">Terms of Service</a>
-      </div>
+      <span>© 2026 TrustCheck. All rights reserved.</span>
     </div>
   </footer>
 

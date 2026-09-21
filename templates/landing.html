@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
-  <title>TrustCheck - AI-Powered Review Authenticity & Risk Intelligence Platform</title>
+  <title>TrustCheck - AI Fake Review Detector</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236366f1' d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,11 +18,8 @@
   <div class="ambient-glow" aria-hidden="true"></div>
   <div class="ambient-organic-halo halo-warm" aria-hidden="true"></div>
   <div class="ambient-organic-halo halo-cool" aria-hidden="true"></div>
-  <div class="ambient-organic-halo halo-emerald" aria-hidden="true"></div>
 
-  <!-- ====================================================================
-       FLOATING PILL HEADER NAVIGATION (Dribbble Inspiration)
-       ==================================================================== -->
+  <!-- FLOATING PILL HEADER NAVIGATION -->
   <div class="saas-nav-wrapper">
     <nav class="saas-nav">
       <a href="{{ url_for('index') }}" class="saas-nav-brand">
@@ -33,29 +30,26 @@
       </a>
 
       <div class="saas-nav-links">
-        <a href="{{ url_for('index') }}" class="saas-nav-link active">Overview</a>
-        <a href="{{ url_for('analyze_page') }}" class="saas-nav-link">Workbench</a>
-        <a href="{{ url_for('intelligence_page') }}" class="saas-nav-link">Intelligence</a>
-        <a href="{{ url_for('technology_page') }}" class="saas-nav-link">Technology</a>
+        <a href="{{ url_for('index') }}" class="saas-nav-link active">Home</a>
+        <a href="{{ url_for('analyze_page') }}" class="saas-nav-link">Analyze Reviews</a>
+        <a href="#features" class="saas-nav-link">How It Works</a>
         <a href="#faq" class="saas-nav-link">FAQ</a>
       </div>
 
       <div class="saas-nav-actions">
         <a href="{{ url_for('analyze_page') }}" class="saas-nav-btn">
-          <i class="bi bi-lightning-charge-fill"></i>
-          <span>Launch Analyzer</span>
+          <i class="bi bi-search"></i>
+          <span>Analyze Now</span>
         </a>
       </div>
     </nav>
   </div>
 
-  <!-- ====================================================================
-       1. HERO SECTION & LIVE FORENSIC TEASER
-       ==================================================================== -->
+  <!-- 1. HERO SECTION -->
   <section class="landing-hero-section">
     <div class="hero-pill-badge">
       <span class="pulse-dot"></span>
-      <span>MULTI-MODEL REVIEW AUTHENTICITY ENGINE</span>
+      <span>AI-POWERED FAKE REVIEW DETECTION</span>
     </div>
 
     <h1 class="landing-hero-title">
@@ -63,22 +57,22 @@
     </h1>
 
     <p class="landing-hero-subtitle">
-      Expose synthetic bot reviews, coordinated manipulation rings, and inflated storefront ratings across Amazon, Flipkart, Google, and Yelp in real-time.
+      Check e-commerce product reviews for bot-generated text, copy-paste spam, and artificially inflated star ratings in seconds.
     </p>
 
     <div class="landing-cta-group">
       <a href="{{ url_for('analyze_page') }}" class="btn-cta-primary">
-        <i class="bi bi-cpu-fill"></i>
-        <span>Start Free Audit</span>
+        <i class="bi bi-link-45deg"></i>
+        <span>Analyze a Product</span>
       </a>
-      <a href="{{ url_for('intelligence_page') }}" class="btn-cta-secondary">
-        <i class="bi bi-shield-shaded"></i>
-        <span>View Live Intelligence</span>
+      <a href="#quick-test" class="btn-cta-secondary">
+        <i class="bi bi-cpu"></i>
+        <span>Try Quick Test</span>
       </a>
     </div>
 
     <!-- Embedded Interactive Preview Card -->
-    <div class="hero-preview-wrapper reveal">
+    <div class="hero-preview-wrapper reveal" id="quick-test">
       <div class="preview-topbar">
         <div class="d-flex align-items-center gap-3">
           <div class="preview-dot-group">
@@ -86,13 +80,13 @@
             <span class="preview-dot" style="background: #f59e0b;"></span>
             <span class="preview-dot" style="background: #10b981;"></span>
           </div>
-          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">
-            trustcheck://model-v2.4/instant-forensics
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+            Instant Review Test
           </span>
         </div>
         <span class="status-beacon">
           <span class="pulse-dot"></span>
-          <span>Engine Ready</span>
+          <span>AI Ready</span>
         </span>
       </div>
 
@@ -100,10 +94,10 @@
         <!-- Left: Quick Input -->
         <div class="d-flex flex-column gap-2">
           <label for="heroQuickInput" class="small fw-bold text-secondary text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">
-            Live NLP Deception Test
+            Test a review instantly
           </label>
           <textarea id="heroQuickInput" class="textarea-custom" style="height: 120px; font-size: 0.82rem;"
-                    placeholder="Type or paste any product review here to test against the trained ML classifier..."></textarea>
+                    placeholder="Paste a single review here to check if it's genuine or manufactured..."></textarea>
           
           <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-1">
             <div class="d-flex gap-1">
@@ -115,13 +109,13 @@
               </button>
             </div>
             <button type="button" id="btnHeroAnalyze" class="btn-primary-glow" style="padding: 0.45rem 1.1rem; font-size: 0.8rem;" onclick="executeHeroAnalysis()">
-              <span>Scan Now</span>
+              <span>Check Review</span>
               <i class="bi bi-arrow-right-short"></i>
             </button>
           </div>
         </div>
 
-        <!-- Right: Live Result Card -->
+        <!-- Right: Result Card -->
         <div class="explainable-results-card p-3" id="heroResultCard" style="background: rgba(0, 0, 0, 0.4);">
           <div class="d-flex align-items-center justify-content-between pb-2 border-bottom" style="border-color: var(--border-subtle) !important;">
             <span id="heroVerdictBadge" class="verdict-classification-badge verdict-genuine" style="font-size: 0.75rem; padding: 2px 10px;">
@@ -134,185 +128,117 @@
 
           <div class="d-flex justify-content-between my-2">
             <div class="text-center p-2 rounded" style="background: rgba(255,255,255,0.02); width: 48%;">
-              <span class="text-muted small d-block" style="font-size: 0.65rem;">TRUST INDEX</span>
-              <span id="heroTrustVal" class="fw-bold fs-5 text-success" style="font-family: var(--font-mono);">92</span>
+              <span class="text-muted small d-block" style="font-size: 0.65rem;">TRUST SCORE</span>
+              <span id="heroTrustVal" class="fw-bold fs-5 text-success" style="font-family: var(--font-mono);">92/100</span>
             </div>
             <div class="text-center p-2 rounded" style="background: rgba(255,255,255,0.02); width: 48%;">
-              <span class="text-muted small d-block" style="font-size: 0.65rem;">SYNTHETIC RISK</span>
-              <span id="heroRiskVal" class="fw-bold fs-5 text-cyan" style="font-family: var(--font-mono);">8%</span>
+              <span class="text-muted small d-block" style="font-size: 0.65rem;">RISK LEVEL</span>
+              <span id="heroRiskVal" class="fw-bold fs-5 text-cyan" style="font-family: var(--font-mono);">8% Low</span>
             </div>
           </div>
 
-          <!-- Micro Spectrum Bars -->
-          <div class="d-flex flex-column gap-1">
-            <div class="d-flex justify-content-between small text-muted" style="font-size: 0.7rem;">
-              <span>Language Pattern Risk</span>
-              <span id="heroLangRisk" class="text-white" style="font-family: var(--font-mono);">12%</span>
-            </div>
-            <div class="risk-spectrum-bar" style="height: 4px;">
-              <div class="risk-spectrum-fill fill-low" id="heroLangBar" style="width: 12%;"></div>
-            </div>
-          </div>
-
-          <p id="heroExplanation" class="text-secondary mb-0 mt-2" style="font-size: 0.72rem; line-height: 1.35;">
-            Natural sentence structure with realistic consumer context.
+          <p id="heroExplanation" class="text-secondary mb-0 mt-2" style="font-size: 0.74rem; line-height: 1.4;">
+            Review exhibits organic customer wording with balanced personal experience markers.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====================================================================
-       2. MULTI-MODEL CAPABILITY CARDS (3 Glass Cards from Dribbble shot)
-       ==================================================================== -->
-  <section class="capability-section">
+  <!-- 2. THREE CORE STEPS -->
+  <section class="capability-section" id="features">
     <div class="section-headline-center">
-      <span class="section-tag-label">Advanced Multi-Dimensional Architecture</span>
-      <h2>Engineered for Deep Deception Forensics</h2>
-      <p>Traditional keyword filters miss sophisticated AI generators. TrustCheck combines multi-layer linguistic feature extraction with neural clustering.</p>
+      <span class="section-tag-label">Simple 3-Step Process</span>
+      <h2>How TrustCheck Works</h2>
+      <p>Identify deceptive online reviews with zero guesswork. Powered by an offline machine learning model.</p>
     </div>
 
     <div class="capability-cards-grid">
-      <!-- Card 1: Natural Language Forensics -->
+      <!-- Step 1 -->
       <div class="capability-card reveal">
-        <div class="capability-card-visual" style="background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.15), transparent 70%);">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <span class="platform-pill p-amazon" style="font-size: 0.7rem;"><i class="bi bi-spellcheck"></i> NLP Syntax</span>
-            <span class="text-muted small" style="font-family: var(--font-mono); font-size: 0.68rem;">TF-IDF Vector</span>
-          </div>
-          <div class="p-2 rounded mt-2" style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); font-size: 0.75rem; color: #fff;">
-            "exhibits repetitive promotional superlatives with abnormal capitalization"
-          </div>
-          <div class="d-flex gap-2 mt-2">
-            <span class="signal-tag-pill" style="font-size: 0.65rem;">Lexical Divergence</span>
-            <span class="signal-tag-pill" style="font-size: 0.65rem;">N-Gram Match</span>
-          </div>
+        <div class="capability-card-visual">
+          <div class="brand-icon mb-2" style="width: 38px; height: 38px; font-size: 1.1rem;"><i class="bi bi-link-45deg"></i></div>
+          <span class="fw-bold text-white small">Amazon, Flipkart, or CSV</span>
+          <p class="text-muted small mb-0 mt-1">Paste any product URL, raw text, or upload a dataset.</p>
         </div>
-        <h4>Natural Language Forensics</h4>
-        <p>Dissects sentence burstiness, vocabulary dispersion, punctuation anomalies, and emotional exaggeration to identify automated generation.</p>
+        <h4>1. Paste or Link</h4>
+        <p>Give a product link or upload reviews in bulk. We'll extract and prepare all review content automatically.</p>
       </div>
 
-      <!-- Card 2: Predictive Analysis -->
+      <!-- Step 2 -->
       <div class="capability-card reveal">
-        <div class="capability-card-visual" style="background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.15), transparent 70%);">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <span class="platform-pill p-google" style="font-size: 0.7rem;"><i class="bi bi-graph-up"></i> Trust Probability</span>
-            <span class="text-success fw-bold" style="font-family: var(--font-mono); font-size: 0.85rem;">+94.6%</span>
-          </div>
-          <div class="d-flex align-items-end justify-content-between h-50 pt-2 px-1">
-            <div style="width: 14%; height: 35%; background: var(--status-genuine); border-radius: 3px;"></div>
-            <div style="width: 14%; height: 55%; background: var(--status-genuine); border-radius: 3px;"></div>
-            <div style="width: 14%; height: 45%; background: var(--status-genuine); border-radius: 3px;"></div>
-            <div style="width: 14%; height: 75%; background: var(--status-genuine); border-radius: 3px;"></div>
-            <div style="width: 14%; height: 95%; background: var(--brand-cyan); border-radius: 3px; box-shadow: 0 0 10px var(--brand-cyan);"></div>
-            <div style="width: 14%; height: 85%; background: var(--status-genuine); border-radius: 3px;"></div>
-          </div>
-          <span class="text-muted mt-2 d-block text-center" style="font-size: 0.65rem; font-family: var(--font-mono);">
-            Ensemble Confidence Interval
-          </span>
+        <div class="capability-card-visual">
+          <div class="brand-icon mb-2" style="width: 38px; height: 38px; font-size: 1.1rem; background: var(--brand-gradient);"><i class="bi bi-cpu"></i></div>
+          <span class="fw-bold text-white small">Trained Classifier</span>
+          <p class="text-muted small mb-0 mt-1">Scores every review as Genuine or Fake in milliseconds.</p>
         </div>
-        <h4>Predictive Risk Scoring</h4>
-        <p>Evaluates reviews against a benchmark ground-truth corpus to calculate calibrated 0–100% authenticity confidence with zero-latency inference.</p>
+        <h4>2. AI Classifies</h4>
+        <p>Our trained ML model analyzes word frequency, exclamation bursts, and deceptive text patterns to classify authenticity.</p>
       </div>
 
-      <!-- Card 3: Smart Categorization -->
+      <!-- Step 3 -->
       <div class="capability-card reveal">
-        <div class="capability-card-visual" style="background: radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.15), transparent 70%);">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <span class="platform-pill p-flipkart" style="font-size: 0.7rem;"><i class="bi bi-diagram-3"></i> Cluster Map</span>
-            <span class="badge-dot" style="background: var(--brand-indigo);"></span>
-          </div>
-          <div class="d-flex flex-column gap-1 mt-1">
-            <div class="d-flex justify-content-between align-items-center p-1 px-2 rounded" style="background: rgba(255,255,255,0.03); font-size: 0.72rem;">
-              <span>Syndicated Text Overlap</span>
-              <span class="risk-chip risk-high" style="font-size: 0.6rem;">89% Match</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center p-1 px-2 rounded" style="background: rgba(255,255,255,0.03); font-size: 0.72rem;">
-              <span>Temporal Velocity Burst</span>
-              <span class="risk-chip risk-medium" style="font-size: 0.6rem;">+27% Surge</span>
-            </div>
-          </div>
+        <div class="capability-card-visual">
+          <div class="brand-icon mb-2" style="width: 38px; height: 38px; font-size: 1.1rem; background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="bi bi-graph-up-arrow"></i></div>
+          <span class="fw-bold text-white small">Composite Trust Score</span>
+          <p class="text-muted small mb-0 mt-1">See genuine vs displayed star ratings and flagged reviews.</p>
         </div>
-        <h4>Smart Deception Categorization</h4>
-        <p>Flags organized review syndicates, incentive campaigns, duplicate syntax clones, and rating-to-text divergence patterns instantly.</p>
+        <h4>3. Get Your Trust Score</h4>
+        <p>Receive an intuitive 0–100 Trust Score, honest rating distribution, common keywords, and the most suspicious reviews.</p>
       </div>
     </div>
   </section>
 
-  <!-- ====================================================================
-       3. SMARTER REVIEW INSIGHTS AT A GLANCE (Bento Showcase from Dribbble)
-       ==================================================================== -->
+  <!-- 3. REVIEW INSIGHTS AT A GLANCE -->
   <section class="insights-showcase-section">
     <div class="showcase-bento-container reveal">
       <div class="showcase-grid">
-        <!-- Left: Headline & Description -->
         <div>
-          <span class="section-tag-label">Ecosystem Transparency</span>
+          <span class="section-tag-label">Clear Results</span>
           <h2 style="font-size: 2.3rem; font-weight: 800; letter-spacing: -0.025em; color: #fff; margin-bottom: 1rem; line-height: 1.2;">
-            Smarter review flow insights at a glance
+            Smarter review insights at a glance
           </h2>
           <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">
-            Keep your product catalog and marketplace reputation aligned in sync with real-time AI. Detect fraudulent spikes before they distort buyer conversion.
+            Know whether that 4.8★ product is genuinely loved by real buyers, or simply inflated by manufactured 5-star seller spam.
           </p>
 
-          <div class="d-flex gap-4">
-            <div>
-              <span class="fw-bold text-white fs-4 d-block" style="font-family: var(--font-mono);">12,847</span>
-              <span class="text-muted small">Reviews Audited</span>
-            </div>
-            <div style="border-left: 1px solid var(--border-subtle); padding-left: 1.5rem;">
-              <span class="fw-bold text-success fs-4 d-block" style="font-family: var(--font-mono);">81.2%</span>
-              <span class="text-muted small">Organic Consensus</span>
-            </div>
-            <div style="border-left: 1px solid var(--border-subtle); padding-left: 1.5rem;">
-              <span class="fw-bold text-cyan fs-4 d-block" style="font-family: var(--font-mono);">24ms</span>
-              <span class="text-muted small">Classification Speed</span>
-            </div>
-          </div>
-
-          <div class="mt-4">
-            <a href="{{ url_for('intelligence_page') }}" class="btn-cta-primary" style="padding: 0.65rem 1.6rem; font-size: 0.85rem;">
-              <i class="bi bi-graph-up-arrow"></i>
-              <span>Explore Ecosystem Telemetry</span>
-            </a>
-          </div>
+          <a href="{{ url_for('analyze_page') }}" class="btn-cta-primary" style="padding: 0.65rem 1.6rem; font-size: 0.85rem;">
+            <i class="bi bi-search"></i>
+            <span>Test a Product Now</span>
+          </a>
         </div>
 
-        <!-- Right: Real-time Showcase Cards -->
         <div class="d-flex flex-column gap-3">
-          <!-- Card A: Trust Score Summary -->
           <div class="showcase-metrics-card">
             <div class="d-flex align-items-center justify-content-between mb-3">
-              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.06em;">CATALOG TRUST INDEX</span>
-              <span class="trend-up small" style="font-family: var(--font-mono);"><i class="bi bi-arrow-up-short"></i> +8.6% Authenticity</span>
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem;">PRODUCT TRUST INDEX</span>
+              <span class="verdict-classification-badge verdict-genuine" style="font-size: 0.72rem;">Trustworthy</span>
             </div>
             <div class="d-flex align-items-baseline gap-2 mb-3">
               <span style="font-size: 2.8rem; font-weight: 900; font-family: var(--font-mono); color: #fff;">87.4</span>
               <span class="text-muted fs-5">/ 100</span>
-              <span class="verdict-classification-badge verdict-genuine ms-auto" style="font-size: 0.72rem;">Grade A Verified</span>
             </div>
             <div class="d-flex align-items-center justify-content-between small text-muted mb-1" style="font-size: 0.72rem;">
-              <span>Genuine Organic: 81.2%</span>
-              <span>Flagged / Suspicious: 18.8%</span>
+              <span>Genuine Reviews: 81.2%</span>
+              <span>Fake / Flagged: 18.8%</span>
             </div>
             <div class="micro-bar-track" style="height: 6px;">
               <div class="micro-bar-fill" style="width: 81.2%; background: var(--brand-gradient);"></div>
             </div>
           </div>
 
-          <!-- Card B: Verified Consumer Record -->
           <div class="showcase-metrics-card" style="background: rgba(17, 21, 34, 0.7);">
             <div class="d-flex align-items-center gap-3">
-              <div class="profile-avatar" style="width: 42px; height: 42px; font-size: 1rem; background: linear-gradient(135deg, #10b981, #06b6d4);">
+              <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 0.9rem; background: linear-gradient(135deg, #10b981, #06b6d4);">
                 <i class="bi bi-shield-check"></i>
               </div>
               <div class="flex-grow-1">
                 <div class="d-flex align-items-center justify-content-between">
-                  <h6 class="text-white mb-0" style="font-size: 0.88rem; font-weight: 700;">Verified Consumer Review</h6>
-                  <span class="platform-pill p-amazon">Amazon Verified</span>
+                  <h6 class="text-white mb-0" style="font-size: 0.85rem; font-weight: 700;">Genuine Customer Feedback</h6>
+                  <span class="platform-pill p-amazon">Amazon</span>
                 </div>
-                <p class="text-secondary mb-0 mt-1" style="font-size: 0.75rem; line-height: 1.35;">
-                  "Tactile switches feel solid for daily typing. Battery easily lasts 4 days between charges."
+                <p class="text-secondary mb-0 mt-1" style="font-size: 0.75rem;">
+                  "Keys feel solid for typing. Battery easily lasts 4 days between charges."
                 </p>
               </div>
             </div>
@@ -322,172 +248,136 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       4. DUE DILIGENCE MADE VERY EASY (Floral / Ambient Section from Dribbble)
-       ==================================================================== -->
+  <!-- 4. DUE DILIGENCE BANNER -->
   <section class="due-diligence-section">
     <div class="due-diligence-card reveal">
-      <span class="section-tag-label" style="color: var(--status-genuine);">Enterprise Protection</span>
-      <h2>Due diligence made very easy</h2>
+      <h2>Check before you spend</h2>
       <p>
-        From continuous Amazon and Flipkart storefront scraping to bulk CSV forensic audits, discover seamless clarity into customer sentiment and product authenticity.
+        Don't rely on inflated 5-star ratings alone. Paste any product link or upload reviews for instant clarity.
       </p>
-      <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
-        <a href="{{ url_for('analyze_page') }}" class="btn-cta-primary">
-          <i class="bi bi-search"></i>
-          <span>Scrape a Storefront URL</span>
-        </a>
-        <a href="{{ url_for('technology_page') }}" class="btn-cta-secondary">
-          <i class="bi bi-layers"></i>
-          <span>How The Pipeline Works</span>
-        </a>
-      </div>
+      <a href="{{ url_for('analyze_page') }}" class="btn-cta-primary">
+        <i class="bi bi-arrow-right-circle"></i>
+        <span>Go to Review Analyzer</span>
+      </a>
     </div>
   </section>
 
-  <!-- ====================================================================
-       5. WHAT PEOPLE SAY (4 Glowing Gradient Cards from Dribbble)
-       ==================================================================== -->
+  <!-- 5. TESTIMONIALS -->
   <section class="testimonials-section">
     <div class="section-headline-center">
       <span class="section-tag-label">User Feedback</span>
       <h2>What people say about TrustCheck</h2>
-      <p>Discover why marketplace analysts and brand managers rely on TrustCheck to guide their trust & safety decisions.</p>
+      <p>Trusted by online shoppers and brand managers alike.</p>
     </div>
 
     <div class="testimonials-grid">
-      <!-- Testimonial 1: Amber -->
       <div class="testimonial-card card-amber reveal">
         <p class="testimonial-quote">
-          "TrustCheck transformed how we audit third-party sellers. Spotting repetitive review bot bursts is now effortless and instant."
+          "Saved me from buying a low-quality projector that had hundreds of fake copy-paste 5-star reviews."
         </p>
         <div class="testimonial-author">
           <div class="author-avatar avatar-amber">JD</div>
           <div class="author-details">
             <span class="author-name">Jordan Davis</span>
-            <span class="author-role">E-commerce Director</span>
+            <span class="author-role">Online Shopper</span>
           </div>
         </div>
       </div>
 
-      <!-- Testimonial 2: Sage Green -->
       <div class="testimonial-card card-sage reveal">
         <p class="testimonial-quote">
-          "The 4-spectrum Explainable AI breakdown gives our legal and compliance teams defensible forensic proof when flagging manipulated listings."
+          "Being able to upload a CSV of thousands of product reviews and get an honest breakdown in seconds is fantastic."
         </p>
         <div class="testimonial-author">
           <div class="author-avatar avatar-sage">SL</div>
           <div class="author-details">
             <span class="author-name">Samantha Liu</span>
-            <span class="author-role">Brand Protection Lead</span>
+            <span class="author-role">E-commerce Seller</span>
           </div>
         </div>
       </div>
 
-      <!-- Testimonial 3: Azure Blue -->
       <div class="testimonial-card card-azure reveal">
         <p class="testimonial-quote">
-          "The offline model loading with zero latency is remarkable. We can upload a 5,000-row CSV and receive a full integrity report in seconds."
+          "The genuine vs displayed star rating comparison is an eye-opener. It shows the real quality of products."
         </p>
         <div class="testimonial-author">
           <div class="author-avatar avatar-azure">MR</div>
           <div class="author-details">
             <span class="author-name">Marcus Reed</span>
-            <span class="author-role">SecOps Fraud Analyst</span>
+            <span class="author-role">Tech Reviewer</span>
           </div>
         </div>
       </div>
 
-      <!-- Testimonial 4: Violet -->
       <div class="testimonial-card card-violet reveal">
         <p class="testimonial-quote">
-          "I check products on TrustCheck before purchasing high-ticket electronics. It immediately flags when 5-star ratings are artificially padded."
+          "Simple, fast, and does exactly what it promises without any unnecessary complexity."
         </p>
         <div class="testimonial-author">
           <div class="author-avatar avatar-violet">EK</div>
           <div class="author-details">
             <span class="author-name">Elena Rostova</span>
-            <span class="author-role">Consumer Tech Advocate</span>
+            <span class="author-role">Consumer Advocate</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====================================================================
-       6. INTERACTIVE FAQ ACCORDION (from Dribbble shot)
-       ==================================================================== -->
+  <!-- 6. FAQ -->
   <section class="faq-section" id="faq">
     <div class="section-headline-center">
-      <span class="section-tag-label">Clarifications</span>
+      <span class="section-tag-label">Frequently Asked</span>
       <h2>Got any questions? We've got answers</h2>
-      <p>Everything you need to know about our detection architecture, dataset support, and scoring calibration.</p>
     </div>
 
     <div class="faq-list">
-      <!-- FAQ 1 -->
       <div class="faq-item open">
         <button type="button" class="faq-question-btn" onclick="toggleFaq(this)">
-          <span>How does TrustCheck distinguish genuine reviews from bot-generated text?</span>
+          <span>How does TrustCheck detect fake reviews?</span>
           <i class="bi bi-chevron-down"></i>
         </button>
         <div class="faq-answer-body">
-          TrustCheck analyzes reviews across four independent risk spectrums: Language Pattern Risk (vocabulary dispersion and superlative repetition), Behavioral Anomaly Risk (temporal posting velocity), Semantic Similarity Risk (syndicated template clusters), and Sentiment Deviation Risk (unnatural polarization compared to star ratings).
+          TrustCheck uses a trained Natural Language Processing machine learning model that examines patterns in vocabulary, repetitive sentence templates, exclamation frequency, and emotional exaggeration that typically characterize manufactured reviews.
         </div>
       </div>
 
-      <!-- FAQ 2 -->
       <div class="faq-item">
         <button type="button" class="faq-question-btn" onclick="toggleFaq(this)">
-          <span>Which e-commerce stores can be scraped automatically?</span>
+          <span>Which stores can be analyzed?</span>
           <i class="bi bi-chevron-down"></i>
         </button>
         <div class="faq-answer-body">
-          Our built-in scraper natively supports Amazon and Flipkart product listing URLs. For other marketplaces, you can upload any standard CSV with a <code>review_text</code> column or paste raw text lines directly into the workbench.
+          Our automatic scraper works best with Amazon and Flipkart product listing links. You can also paste text directly or upload any CSV file containing a <code>review_text</code> column.
         </div>
       </div>
 
-      <!-- FAQ 3 -->
       <div class="faq-item">
         <button type="button" class="faq-question-btn" onclick="toggleFaq(this)">
-          <span>Is my data sent to external LLMs or third-party cloud APIs?</span>
+          <span>What does the Trust Score mean?</span>
           <i class="bi bi-chevron-down"></i>
         </button>
         <div class="faq-answer-body">
-          No. TrustCheck uses a trained offline Machine Learning ensemble model and TF-IDF feature space loaded directly in the server process. All classifications execute locally with zero external API dependencies, ensuring complete privacy and millisecond inference speeds.
+          The Trust Score ranges from 0 to 100. A score of 70+ indicates predominantly authentic reviews. Scores between 40–69 suggest caution, and scores below 40 reflect high concentrations of suspicious reviews.
         </div>
       </div>
 
-      <!-- FAQ 4 -->
       <div class="faq-item">
         <button type="button" class="faq-question-btn" onclick="toggleFaq(this)">
-          <span>What does the 0–100 Trust Score represent?</span>
+          <span>Is my data private?</span>
           <i class="bi bi-chevron-down"></i>
         </button>
         <div class="faq-answer-body">
-          The Trust Score is a calibrated composite index reflecting the proportion of organic consumer consensus. Scores above 70 represent high authentic consumer confidence, 40–69 warrant caution, and scores below 40 indicate high coordinated manipulation activity.
-        </div>
-      </div>
-
-      <!-- FAQ 5 -->
-      <div class="faq-item">
-        <button type="button" class="faq-question-btn" onclick="toggleFaq(this)">
-          <span>Can I export forensic audit reports?</span>
-          <i class="bi bi-chevron-down"></i>
-        </button>
-        <div class="faq-answer-body">
-          Yes! The Intelligence table allows single-review JSON exports with complete risk spectrum scores, and the batch audit dashboard provides full CSV dataset breakdowns with genuine and fake classification tags.
+          Yes. All review classification happens locally inside our server environment. We do not sell your review data or share it with third parties.
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ====================================================================
-       7. MODERN AI SAAS FOOTER
-       ==================================================================== -->
+  <!-- FOOTER -->
   <footer class="saas-footer">
-    <div class="footer-container">
-      <!-- Col 1: Brand -->
+    <div class="footer-container" style="grid-template-columns: 2fr 1fr 1fr;">
       <div class="footer-brand-col">
         <a href="{{ url_for('index') }}" class="saas-nav-brand">
           <div class="brand-logo-glow">
@@ -495,66 +385,36 @@
           </div>
           <span class="brand-text">TrustCheck</span>
         </a>
-        <p>
-          Next-generation AI review authenticity intelligence and risk forensics for enterprise e-commerce and conscious consumers.
-        </p>
-        <div class="d-flex align-items-center gap-2 mt-3">
-          <span class="pulse-dot"></span>
-          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--brand-sky);">
-            Core Engine Uptime: 99.98%
-          </span>
-        </div>
+        <p>AI-powered fake review detection for e-commerce products.</p>
       </div>
 
-      <!-- Col 2: Navigation -->
       <div class="footer-col">
-        <h5>Platform</h5>
+        <h5>Navigation</h5>
         <ul class="footer-links">
-          <li><a href="{{ url_for('index') }}">Overview</a></li>
-          <li><a href="{{ url_for('analyze_page') }}">Analyzer Workbench</a></li>
-          <li><a href="{{ url_for('intelligence_page') }}">Ecosystem Telemetry</a></li>
-          <li><a href="{{ url_for('technology_page') }}">AI Architecture</a></li>
-          <li><a href="{{ url_for('dashboard_page') }}">Batch Audit Results</a></li>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Analyze Reviews</a></li>
+          <li><a href="#features">How It Works</a></li>
+          <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
 
-      <!-- Col 3: Capabilities -->
       <div class="footer-col">
-        <h5>Forensics</h5>
+        <h5>Tools</h5>
         <ul class="footer-links">
-          <li><a href="{{ url_for('analyze_page') }}">Single Review Scanner</a></li>
-          <li><a href="{{ url_for('analyze_page') }}">Storefront URL Scraper</a></li>
-          <li><a href="{{ url_for('intelligence_page') }}">Suspicious Patterns Matrix</a></li>
-          <li><a href="{{ url_for('technology_page') }}">TF-IDF Vector Space</a></li>
-          <li><a href="#faq">FAQ & Support</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Product Link Scraper</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">CSV Batch Upload</a></li>
+          <li><a href="{{ url_for('analyze_page') }}">Single Review Test</a></li>
         </ul>
-      </div>
-
-      <!-- Col 4: Newsletter -->
-      <div class="footer-col footer-newsletter-box">
-        <h5>Intelligence Briefing</h5>
-        <p>Subscribe to receive weekly telemetry reports on e-commerce review fraud and bot network trends.</p>
-        <form onsubmit="event.preventDefault(); alert('Subscribed to TrustCheck Intelligence Briefing.');" class="newsletter-input-group">
-          <input type="email" placeholder="Enter your work email" required>
-          <button type="submit">Subscribe</button>
-        </form>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <span>© 2026 TrustCheck Inc. All rights reserved. Enterprise AI Review Authenticity.</span>
-      <div class="d-flex gap-3">
-        <a href="javascript:void(0)" class="text-muted text-decoration-none">Privacy Policy</a>
-        <a href="javascript:void(0)" class="text-muted text-decoration-none">Terms of Service</a>
-        <a href="javascript:void(0)" class="text-muted text-decoration-none">Security Architecture</a>
-      </div>
+      <span>© 2026 TrustCheck. All rights reserved.</span>
     </div>
   </footer>
 
-  <!-- SCRIPTS -->
   <script src="{{ url_for('static', filename='bg-network.js') }}"></script>
   <script>
-    // FAQ Accordion Toggle
     function toggleFaq(button) {
       const item = button.closest('.faq-item');
       const isOpen = item.classList.contains('open');
@@ -564,7 +424,6 @@
       }
     }
 
-    // Samples for Hero Interactive Teaser
     const HERO_SAMPLES = {
       bot: "AMAZING! BEST PRODUCT EVER IN HUMAN HISTORY 10/10 MUST BUY RECOMMEND TO EVERYONE DO NOT HESITATE WOW WOW WOW FIVE STARS ALL THE WAY!!",
       genuine: "I've been using this keyboard for 3 weeks now. The tactile switches feel solid for daily typing, though the wrist rest is a bit stiff. Battery life easily lasts 4 days between charges."
@@ -574,7 +433,6 @@
       document.getElementById('heroQuickInput').value = HERO_SAMPLES[type] || '';
     }
 
-    // Hero Live Analysis via /api/analyze-single
     async function executeHeroAnalysis() {
       const input = document.getElementById('heroQuickInput');
       const text = input.value.trim();
@@ -597,43 +455,35 @@
         if (!resp.ok) throw new Error('Analysis failed.');
         const data = await resp.json();
 
-        // Update Hero Preview Card
         const badge = document.getElementById('heroVerdictBadge');
         const conf = document.getElementById('heroConfidence');
         const trustVal = document.getElementById('heroTrustVal');
         const riskVal = document.getElementById('heroRiskVal');
-        const langVal = document.getElementById('heroLangRisk');
-        const langBar = document.getElementById('heroLangBar');
         const expl = document.getElementById('heroExplanation');
 
         conf.textContent = data.confidence + '%';
-        trustVal.textContent = data.trust_score;
-        riskVal.textContent = (100 - data.trust_score) + '%';
-        langVal.textContent = data.language_risk + '%';
-        langBar.style.width = data.language_risk + '%';
+        trustVal.textContent = data.trust_score + '/100';
+        riskVal.textContent = (100 - data.trust_score) + '% Risk';
         expl.textContent = data.explanation;
 
         if (data.label === 'Fake') {
           badge.className = 'verdict-classification-badge verdict-fake';
-          badge.innerHTML = '<i class="bi bi-shield-x"></i> High Risk Synthetic';
+          badge.innerHTML = '<i class="bi bi-shield-x"></i> Likely Fake';
           trustVal.className = 'fw-bold fs-5 text-danger';
-          langBar.className = 'risk-spectrum-fill fill-critical';
         } else if (data.label === 'Suspicious') {
           badge.className = 'verdict-classification-badge verdict-suspicious';
           badge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Suspicious';
           trustVal.className = 'fw-bold fs-5 text-warning';
-          langBar.className = 'risk-spectrum-fill fill-moderate';
         } else {
           badge.className = 'verdict-classification-badge verdict-genuine';
           badge.innerHTML = '<i class="bi bi-patch-check"></i> Genuine Review';
           trustVal.className = 'fw-bold fs-5 text-success';
-          langBar.className = 'risk-spectrum-fill fill-low';
         }
       } catch (err) {
         console.error(err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span>Scan Now</span><i class="bi bi-arrow-right-short"></i>';
+        btn.innerHTML = '<span>Check Review</span><i class="bi bi-arrow-right-short"></i>';
       }
     }
   </script>

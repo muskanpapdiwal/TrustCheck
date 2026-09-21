@@ -110,7 +110,7 @@ def api_analyze_single():
 @app.route("/api/index", methods=["GET"])
 @app.route("/api/index.py", methods=["GET"])
 def index():
-    """AI SaaS Multi-Model Landing Page."""
+    """Simple AI SaaS Landing Page."""
     if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
         return api_analyze_single()
     intel_data = get_default_intelligence()
@@ -122,7 +122,7 @@ def index():
 @app.route("/api/analyze", methods=["GET", "POST"])
 @app.route("/api/analyze.py", methods=["GET", "POST"])
 def analyze_page():
-    """Review Analyzer & Forensic Workbench (GET), or process batch review analysis (POST)."""
+    """Review Analyzer Page (GET), or process batch reviews (POST)."""
     if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
         return api_analyze_single()
     if request.method == "POST":
@@ -133,19 +133,12 @@ def analyze_page():
 
 @app.route("/intelligence", methods=["GET"])
 @app.route("/threats", methods=["GET"])
-def intelligence_page():
-    """Ecosystem Threat Telemetry & Risk Signals Dashboard."""
-    intel_data = get_default_intelligence()
-    return render_template("intelligence.html", intel=intel_data, intelligence=intel_data)
-
-
 @app.route("/technology", methods=["GET"])
 @app.route("/how-it-works", methods=["GET"])
 @app.route("/architecture", methods=["GET"])
-def technology_page():
-    """AI Architecture & 6-Stage Forensic Pipeline Deep-Dive."""
-    intel_data = get_default_intelligence()
-    return render_template("technology.html", intel=intel_data, intelligence=intel_data)
+def redirect_to_analyze():
+    """Redirect removed complex pages cleanly to the analyzer."""
+    return redirect(url_for("analyze_page"))
 
 
 @app.route("/dashboard", methods=["GET"])
