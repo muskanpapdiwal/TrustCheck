@@ -61,20 +61,30 @@ def parse_pasted_text(pasted_reviews):
 
 def parse_csv_upload(uploaded_file):
     """
-    CSV upload: requires a `review_text` column (case-insensitive), an
-    optional `rating` column. Returns None if the file doesn't have a
-    usable review_text column so the caller can show a friendly error.
+    CSV upload: requires a `review_text` or `review` column (case-insensitive),
+    with optional `rating`, `date`, `reviewer` columns. Returns None if no usable column.
     """
     raw_bytes = uploaded_file.read()
     df = pd.read_csv(io.BytesIO(raw_bytes))
 
-    # Match "review_text" regardless of case, so "Review_Text" etc. also work.
     column_lookup = {col.lower(): col for col in df.columns}
-    if "review_text" not in column_lookup:
+    text_col = None
+    for candidate in ["review_text", "review", "text", "body", "content", "reviews"]:
+        if candidate in column_lookup:
+            text_col = column_lookup[candidate]
+            break
+
+    if not text_col:
         return None
 
-    text_col = column_lookup["review_text"]
-    rating_col = column_lookup.get("rating")
+    rating_col = None
+    for candidate in ["rating", "stars", "score"]:
+        if candidate in column_lookup:
+            rating_col = column_lookup[candidate]
+            break
+
+    date_col = column_lookup.get("date")
+    reviewer_col = column_lookup.get("reviewer") or column_lookup.get("user")
 
     reviews = []
     for _, row in df.iterrows():
@@ -84,10 +94,19 @@ def parse_csv_upload(uploaded_file):
         rating = None
         if rating_col is not None:
             try:
-                rating = int(row[rating_col])
+                rating = int(float(row[rating_col]))
             except (ValueError, TypeError):
                 rating = None
-        reviews.append({"text": text, "rating": rating})
+
+        date = str(row[date_col]).strip() if date_col and str(row[date_col]).lower() != "nan" else None
+        reviewer = str(row[reviewer_col]).strip() if reviewer_col and str(row[reviewer_col]).lower() != "nan" else None
+
+        item = {"text": text, "rating": rating}
+        if date:
+            item["date"] = date
+        if reviewer:
+            item["reviewer"] = reviewer
+        reviews.append(item)
     return reviews
 
 
@@ -110,11 +129,17 @@ def api_analyze_single():
 @app.route("/api/index", methods=["GET"])
 @app.route("/api/index.py", methods=["GET"])
 def index():
-    """Simple AI SaaS Landing Page."""
-    if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
+    """Main TrustCheck Application."""
+    if "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
         return api_analyze_single()
     intel_data = get_default_intelligence()
-    return render_template("landing.html", intel=intel_data, intelligence=intel_data)
+    return render_template("index.html", intel=intel_data, intelligence=intel_data)
+
+
+@app.route("/api/default-intelligence", methods=["GET"])
+def api_default_intelligence():
+    """Return default benchmark telemetry data in JSON."""
+    return jsonify(get_default_intelligence())
 
 
 @app.route("/analyze", methods=["GET", "POST"])
@@ -123,12 +148,12 @@ def index():
 @app.route("/api/analyze.py", methods=["GET", "POST"])
 def analyze_page():
     """Review Analyzer Page (GET), or process batch reviews (POST)."""
-    if request.is_json or "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
+    if "analyze-single" in request.path or "analyze_single" in request.path or "analyze-single" in request.headers.get("x-matched-path", ""):
         return api_analyze_single()
     if request.method == "POST":
         return analyze()
     intel_data = get_default_intelligence()
-    return render_template("analyze.html", intel=intel_data, intelligence=intel_data)
+    return render_template("index.html", intel=intel_data, intelligence=intel_data)
 
 
 @app.route("/intelligence", methods=["GET"])
@@ -137,8 +162,8 @@ def analyze_page():
 @app.route("/how-it-works", methods=["GET"])
 @app.route("/architecture", methods=["GET"])
 def redirect_to_analyze():
-    """Redirect removed complex pages cleanly to the analyzer."""
-    return redirect(url_for("analyze_page"))
+    """Redirect removed complex pages cleanly to home."""
+    return redirect(url_for("index"))
 
 
 @app.route("/dashboard", methods=["GET"])
@@ -156,50 +181,62 @@ def dashboard_page():
         for r in intel_data["recent_reviews"]
     ]
     dashboard_data = build_dashboard_data(sample_reviews)
-    return render_template("dashboard.html", data=dashboard_data, intelligence=intel_data)
+    return render_template("index.html", data=dashboard_data, intelligence=intel_data)
 
 
 def analyze():
-    input_mode = request.form.get("input_mode", "manual")
+    is_api = (
+        request.is_json
+        or request.headers.get("Accept") == "application/json"
+        or request.args.get("format") == "json"
+        or (request.form and request.form.get("format") == "json")
+    )
+
+    input_mode = request.form.get("input_mode") if request.form else (request.get_json(silent=True) or {}).get("input_mode", "manual")
     platform_avg_rating_override = None
 
     if input_mode == "url":
-        product_url = request.form.get("product_url", "").strip()
+        product_url = (request.form.get("product_url") if request.form else (request.get_json(silent=True) or {}).get("product_url", "")).strip()
         scrape_result = scrape_product_reviews(product_url)
 
         if not scrape_result["success"]:
+            if is_api:
+                return jsonify({"success": False, "error": scrape_result["error"]}), 400
             flash(scrape_result["error"], "warning")
             return redirect(url_for("analyze_page"))
 
         raw_reviews = scrape_result["reviews"]
         platform_avg_rating_override = scrape_result["platform_avg_rating"]
     else:
-        uploaded_file = request.files.get("csv_file")
+        uploaded_file = request.files.get("csv_file") if request.files else None
 
         if uploaded_file and uploaded_file.filename:
             raw_reviews = parse_csv_upload(uploaded_file)
             if raw_reviews is None:
-                flash(
-                    "That CSV doesn't have a 'review_text' column - please check "
-                    "the file and try again.",
-                    "danger",
-                )
+                err_msg = "That CSV doesn't have a 'review' or 'review_text' column - please check the file and try again."
+                if is_api:
+                    return jsonify({"success": False, "error": err_msg}), 400
+                flash(err_msg, "danger")
                 return redirect(url_for("analyze_page"))
         else:
-            pasted_reviews = request.form.get("pasted_reviews", "")
+            pasted_reviews = request.form.get("pasted_reviews") if request.form else (request.get_json(silent=True) or {}).get("pasted_reviews", "")
             raw_reviews = parse_pasted_text(pasted_reviews)
 
     if not raw_reviews:
-        flash("No reviews found - please paste some text or upload a CSV.", "danger")
+        err_msg = "No reviews found - please paste some text or upload a CSV."
+        if is_api:
+            return jsonify({"success": False, "error": err_msg}), 400
+        flash(err_msg, "danger")
         return redirect(url_for("analyze_page"))
 
-    # Classify all reviews in one batched vectorize+predict call rather than
-    # looping predict_review() per review - much faster for large review sets.
+    # Classify all reviews in one batched vectorize+predict call
     predictions = predict_reviews_batch([raw["text"] for raw in raw_reviews])
     reviews = [
         {
             "text": raw["text"],
             "rating": raw["rating"],
+            "date": raw.get("date"),
+            "reviewer": raw.get("reviewer"),
             "label": prediction["label"],
             "raw_label": prediction["raw_label"],
             "confidence": prediction["confidence"],
@@ -208,7 +245,13 @@ def analyze():
     ]
 
     dashboard_data = build_dashboard_data(reviews, platform_avg_rating_override)
-    return render_template("dashboard.html", data=dashboard_data, intelligence=get_default_intelligence())
+    if is_api:
+        return jsonify({
+            "success": True,
+            "data": dashboard_data,
+            "intelligence": get_default_intelligence()
+        })
+    return render_template("index.html", data=dashboard_data, intelligence=get_default_intelligence())
 
 
 if __name__ == "__main__":

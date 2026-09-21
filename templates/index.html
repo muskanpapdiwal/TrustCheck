@@ -3,1199 +3,765 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <title>TrustCheck - Enterprise AI Review Authenticity & Risk Intelligence</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236366f1' d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z'/%3E%3C/svg%3E">
+  <title>TrustCheck - Spot Fake Reviews in Seconds</title>
+  
+  <!-- Inter Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;750;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Design Tokens & Nature-Toned SaaS CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='design-tokens.css') }}">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <!-- Ambient cybernetic particles & lighting -->
-  <canvas id="bgCanvas" class="bg-canvas" aria-hidden="true"></canvas>
-  <div class="ambient-glow" aria-hidden="true"></div>
 
-  <!-- Global Loading Overlay for Batch Analysis -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner-border" role="status"></div>
-    <p id="loadingOverlayText">Analyzing review telemetry and computing risk score…</p>
-  </div>
+  <!-- ========================================================================
+       STICKY NAVBAR
+       ======================================================================== -->
+  <header class="tc-navbar-wrapper">
+    <div class="tc-container">
+      <nav class="tc-navbar">
+        <a href="#home" class="tc-brand" onclick="navigateTo('home')">
+          <div class="tc-brand-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <span>TrustCheck</span>
+        </a>
 
-  <div class="app-wrapper">
-
-    <!-- ====================================================================
-         1. COMPACT SIDEBAR NAVIGATION
-         ==================================================================== -->
-    <aside class="app-sidebar" id="appSidebar">
-      <a href="{{ url_for('index') }}" class="sidebar-brand">
-        <div class="brand-icon">
-          <i class="bi bi-shield-check"></i>
+        <div class="tc-nav-links">
+          <a href="#features" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">How It Works</a>
+          <a href="#bento" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">Features</a>
+          <a href="#faq" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">FAQ</a>
         </div>
-        <div class="d-flex flex-column">
-          <div class="d-flex align-items-center gap-2">
-            <span class="brand-name">TrustCheck</span>
-            <span class="brand-badge">v2.4</span>
+
+        <div>
+          <a href="#analyzer" class="tc-btn-dark-pill" onclick="if(window.location.hash!=='#home') navigateTo('home')">
+            <i class="bi bi-search"></i>
+            <span>Analyze Reviews</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       PAGE 1: HOME / ANALYZER
+       ======================================================================== -->
+  <main id="page-home" class="tc-page active">
+
+    <!-- 1. Hero Section -->
+    <section class="tc-hero-section">
+      <div class="tc-hero-backdrop"></div>
+      <div class="tc-hills-contour"></div>
+
+      <div class="tc-container">
+        <!-- Thin Arc with Generic Floating Source Icons (Shopping, Marketplace, Maps, Food) -->
+        <div class="tc-source-arc-wrap">
+          <svg class="tc-source-arc-svg" viewBox="0 0 540 60">
+            <path d="M 40,55 Q 270,-10 500,55" fill="none" stroke="#D8E2D9" stroke-width="1.5" stroke-dasharray="4,4" />
+          </svg>
+          <div class="tc-floating-source-icon" style="left: 12%; top: 22px;" title="Online Shopping">
+            <i class="bi bi-cart3"></i>
+          </div>
+          <div class="tc-floating-source-icon" style="left: 36%; top: 2px;" title="Marketplace Storefront">
+            <i class="bi bi-shop"></i>
+          </div>
+          <div class="tc-floating-source-icon" style="right: 36%; top: 2px;" title="Location & Maps">
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <div class="tc-floating-source-icon" style="right: 12%; top: 22px;" title="Services & Delivery">
+            <i class="bi bi-bag-check"></i>
           </div>
         </div>
-      </a>
 
-      <nav class="sidebar-menu">
-        <span class="menu-category">Intelligence Platform</span>
-        <a href="#overview" class="nav-link-custom active">
-          <i class="bi bi-grid-1x2-fill"></i>
-          <span>Overview</span>
-        </a>
-        <a href="#analyzer-workbench" class="nav-link-custom">
-          <i class="bi bi-cpu-fill"></i>
-          <span>Analyze Review</span>
-          <span class="nav-badge">LIVE</span>
-        </a>
-        <a href="#recent-reviews" class="nav-link-custom">
-          <i class="bi bi-chat-square-quote-fill"></i>
-          <span>Reviews Stream</span>
-        </a>
-        <a href="#trust-intelligence" class="nav-link-custom">
-          <i class="bi bi-shield-shaded"></i>
-          <span>Trust Index</span>
-        </a>
-        <a href="#patterns-matrix" class="nav-link-custom">
-          <i class="bi bi-diagram-3-fill"></i>
-          <span>Suspicious Patterns</span>
-        </a>
-        <a href="#activity-analytics" class="nav-link-custom">
-          <i class="bi bi-graph-up-arrow"></i>
-          <span>Activity Analytics</span>
-        </a>
+        <!-- Pill Badge -->
+        <div class="tc-pill-badge">
+          <span class="tc-pulse-dot"></span>
+          <span>Spot fake reviews in seconds</span>
+        </div>
 
-        <span class="menu-category mt-3">Platform Operations</span>
-        <a href="#pipeline-section" class="nav-link-custom">
-          <i class="bi bi-layers-fill"></i>
-          <span>AI Architecture</span>
-        </a>
-        <a href="javascript:void(0)" class="nav-link-custom" onclick="alert('Export ready: PDF & JSON audit reports available on request.')">
-          <i class="bi bi-file-earmark-bar-graph"></i>
-          <span>Audit Reports</span>
-        </a>
-        <a href="javascript:void(0)" class="nav-link-custom" onclick="alert('Configuration: ML thresholds are tuned to 91.2% confidence.')">
-          <i class="bi bi-sliders"></i>
-          <span>Model Parameters</span>
-        </a>
-      </nav>
+        <!-- Headline & Subheading -->
+        <h1 class="tc-hero-title">
+          Trust Every Review.<br>Spot the Fake Ones.
+        </h1>
+        <p class="tc-hero-subtitle">
+          Get an instant authenticity score with transparent linguistic and behavioral reasoning before you buy.
+        </p>
 
-      <div class="sidebar-footer">
-        <div class="sidebar-pro-card">
-          <h6><i class="bi bi-lightning-charge-fill"></i> Enterprise Core</h6>
-          <p>Local ML Engine active. Offline weights loaded with zero latency.</p>
-          <div class="d-flex align-items-center gap-2">
-            <span class="pulse-dot"></span>
-            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--brand-sky);">99.98% Model Uptime</span>
+        <!-- Single Sapling Visual Focal Element -->
+        <div class="tc-sapling-focal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="36" height="36">
+            <path d="M12 22v-9" />
+            <path d="M9 13a4.5 4.5 0 0 0 3-4.2V8a4.5 4.5 0 0 0-3 4.2c0 .4.1.7.2 1" />
+            <path d="M15 13a4.5 4.5 0 0 1-3-4.2V8a4.5 4.5 0 0 1 3 4.2c0 .4-.1.7-.2 1" />
+            <path d="M12 8a3 3 0 0 1 3-3c1.7 0 3 1.3 3 3 0 1.2-.7 2.2-1.7 2.7" />
+            <path d="M12 8a3 3 0 0 0-3-3c-1.7 0-3 1.3-3 3 0 1.2.7 2.2 1.7 2.7" />
+          </svg>
+        </div>
+
+        <!-- 2. The Main Analyzer Card -->
+        <div id="analyzer" class="tc-analyzer-card">
+          <!-- 3 Tabs Header -->
+          <div class="tc-analyzer-tabs">
+            <button type="button" class="tc-tab-btn active" data-tab-target="tabPaste" data-mode="single">
+              <i class="bi bi-pencil-square"></i>
+              <span>Paste Review</span>
+            </button>
+            <button type="button" class="tc-tab-btn" data-tab-target="tabCsv" data-mode="csv">
+              <i class="bi bi-file-earmark-spreadsheet"></i>
+              <span>Upload CSV</span>
+            </button>
+            <button type="button" class="tc-tab-btn" data-tab-target="tabUrl" data-mode="url">
+              <i class="bi bi-link-45deg"></i>
+              <span>Product Link</span>
+            </button>
+          </div>
+
+          <!-- Tab 1: Paste Review -->
+          <div id="tabPaste" class="tc-tab-pane active">
+            <div class="tc-textarea-wrap">
+              <textarea id="pasteTextarea" class="tc-textarea" placeholder="Paste a single review or multiple reviews (one per line) to evaluate authenticity…"></textarea>
+              <div class="tc-textarea-meta">
+                <span id="pasteCharCount">0 characters</span>
+                <span>Press Analyze to run offline NLP model</span>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="button" id="btnAnalyzePaste" class="tc-btn-primary">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span>Analyze Review</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 2: Upload CSV -->
+          <div id="tabCsv" class="tc-tab-pane">
+            <div id="csvDropzone" class="tc-dropzone">
+              <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+              <div class="tc-dropzone-icon">
+                <i class="bi bi-cloud-arrow-up"></i>
+              </div>
+              <div class="tc-dropzone-title">Drop your CSV file here or browse</div>
+              <div class="tc-dropzone-subtitle">Accepts .csv up to 5MB</div>
+
+              <div id="csvFileStatus" class="tc-csv-file-status" style="display:none;"></div>
+            </div>
+
+            <div class="tc-csv-guidance">
+              <i class="bi bi-info-circle text-success" style="font-size: 1.1rem; margin-top: 1px;"></i>
+              <div>
+                <strong>Expected format:</strong> Must contain a <code>review</code> (or <code>review_text</code>) column. Optional columns: <code>rating</code>, <code>date</code>, and <code>reviewer</code>.
+                <a href="#" id="btnDownloadSampleCsv" class="text-success fw-semibold ms-2 text-decoration-underline">Download sample template</a>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.25rem;">
+              <button type="button" id="btnAnalyzeCsv" class="tc-btn-primary">
+                <i class="bi bi-cpu-fill"></i>
+                <span>Analyze CSV Batch</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 3: Product Link -->
+          <div id="tabUrl" class="tc-tab-pane">
+            <div class="tc-url-input-wrap">
+              <div class="tc-input-with-badge">
+                <i class="bi bi-link-45deg me-2 text-muted"></i>
+                <input type="url" id="productUrlInput" class="tc-url-input" placeholder="Paste an Amazon or Flipkart product listing URL…">
+                <span id="urlPlatformBadge" class="tc-platform-badge">Auto-detect</span>
+              </div>
+              <div id="urlErrorMsg" class="text-danger small mt-2" style="display:none;"></div>
+            </div>
+
+            <div class="tc-csv-guidance">
+              <i class="bi bi-shield-check text-success" style="font-size: 1.1rem; margin-top: 1px;"></i>
+              <div>
+                <strong>Automated Scraper:</strong> Live review extraction is tailored for Amazon and Flipkart pages. If automated access is blocked by anti-bot checks, you can simply paste the reviews or upload a CSV.
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.25rem;">
+              <button type="button" id="btnAnalyzeUrl" class="tc-btn-primary">
+                <i class="bi bi-search"></i>
+                <span>Fetch & Analyze</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Try an Example Chips -->
+        <div class="tc-example-chips">
+          <span class="tc-example-label">Try an example:</span>
+          <button type="button" class="tc-chip" data-example="bot">
+            <i class="bi bi-robot text-danger me-1"></i> 5-Star Bot Burst
+          </button>
+          <button type="button" class="tc-chip" data-example="genuine">
+            <i class="bi bi-patch-check text-success me-1"></i> Balanced Tech Review
+          </button>
+          <button type="button" class="tc-chip" data-example="template">
+            <i class="bi bi-copy text-warning me-1"></i> Template Astroturfing
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. How It Works (3 Steps) -->
+    <section id="features" class="tc-section">
+      <div class="tc-container">
+        <div class="tc-section-header">
+          <div class="tc-section-tag">How It Works</div>
+          <h2 class="tc-section-title">Three Simple Steps to True Authenticity</h2>
+          <p class="tc-section-desc">We combine natural language forensics with statistical anomaly detection to protect your purchases.</p>
+        </div>
+
+        <div class="tc-steps-grid">
+          <div class="tc-step-card">
+            <div class="tc-step-number">Step 01</div>
+            <h3 class="tc-step-card-title">Add Reviews</h3>
+            <p class="tc-step-card-desc">Paste an Amazon or Flipkart URL, drag-and-drop a CSV file, or paste raw review text directly into the analyzer.</p>
+          </div>
+
+          <div class="tc-step-card">
+            <div class="tc-step-number">Step 02</div>
+            <h3 class="tc-step-card-title">We Analyze</h3>
+            <p class="tc-step-card-desc">Our machine learning model scans linguistic nuances, repetitive syntax templates, and abnormal rating distributions.</p>
+          </div>
+
+          <div class="tc-step-card">
+            <div class="tc-step-number">Step 03</div>
+            <h3 class="tc-step-card-title">Get Trust Report</h3>
+            <p class="tc-step-card-desc">View an overall 0–100 Trust Score, honest adjusted star ratings, red flags, and review-by-review forensic reasoning.</p>
           </div>
         </div>
       </div>
-    </aside>
+    </section>
 
-    <!-- ====================================================================
-         2. MAIN APPLICATION WORKSPACE
-         ==================================================================== -->
-    <main class="app-main">
-
-      <!-- Contextual Header -->
-      <header class="topbar-header">
-        <div class="topbar-title-area">
-          <div class="topbar-title-row">
-            <h1 class="topbar-title">Review Authenticity & Risk Intelligence</h1>
-            <div class="status-beacon">
-              <span class="pulse-dot"></span>
-              <span>Detection Engine Active</span>
-            </div>
-          </div>
-          <span class="topbar-subtitle">Continuous multi-dimensional linguistic & temporal fraud monitoring</span>
+    <!-- 4. What We Look For (Bento Grid) -->
+    <section id="bento" class="tc-section" style="background: #F9F9F7; border-top: var(--tc-border-hairline); border-bottom: var(--tc-border-hairline);">
+      <div class="tc-container">
+        <div class="tc-section-header">
+          <div class="tc-section-tag">Forensic Indicators</div>
+          <h2 class="tc-section-title">What We Look For</h2>
+          <p class="tc-section-desc">Our detection engine disaggregates risk into clear linguistic and behavioral patterns.</p>
         </div>
 
-        <div class="topbar-actions">
-          <div class="search-box">
-            <i class="bi bi-search search-icon"></i>
-            <input type="text" id="globalSearchInput" placeholder="Search reviews, ASIN, keywords...">
-            <span class="search-shortcut">⌘K</span>
-          </div>
-
-          <button type="button" class="btn-icon" title="Notifications" onclick="alert('All 4 AI signals reviewed. No unaddressed alerts.')">
-            <i class="bi bi-bell"></i>
-            <span class="badge-dot"></span>
-          </button>
-
-          <button type="button" class="btn-icon" title="Toggle Help" onclick="document.getElementById('pipeline-section').scrollIntoView({behavior: 'smooth'})">
-            <i class="bi bi-question-circle"></i>
-          </button>
-
-          <div class="user-profile-chip" title="Active Analyst Session">
-            <div class="profile-avatar">TC</div>
-            <div class="profile-info">
-              <span class="profile-name">SecOps Lead</span>
-              <span class="profile-role">Risk Intelligence</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Content Container -->
-      <div class="content-body" id="overview">
-
-        <!-- Flashed Alerts if any -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="ai-reasoning-box" style="border-color: var(--status-fake-border); background: var(--status-fake-bg);">
-                <i class="bi bi-exclamation-triangle-fill" style="color: var(--status-fake);"></i>
-                <div>
-                  <strong style="color: #fff;">Notice:</strong> {{ message }}
-                </div>
+        <div class="tc-bento-grid">
+          <!-- Card 1 -->
+          <div class="tc-bento-card tc-bento-col-4">
+            <div>
+              <div class="tc-bento-icon-wrap">
+                <i class="bi bi-chat-quote"></i>
               </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        <!-- Section Header -->
-        <div class="section-header-row">
-          <div class="section-title-wrap">
-            <h2>Ecosystem Telemetry</h2>
-            <p>Aggregated multi-channel consumer review integrity index</p>
+              <h4 class="tc-bento-title">Language Patterns</h4>
+              <p class="tc-bento-desc">Detects repetitive superlatives ("best ever", "life changing") and excessive exclamation marks typical of automated bot generation.</p>
+            </div>
           </div>
-          <div class="d-flex gap-2">
-            <button class="tab-btn active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-              <i class="bi bi-arrow-clockwise"></i> Live Telemetry
+
+          <!-- Card 2 -->
+          <div class="tc-bento-card tc-bento-col-4">
+            <div>
+              <div class="tc-bento-icon-wrap">
+                <i class="bi bi-intersect"></i>
+              </div>
+              <h4 class="tc-bento-title">Repeated Text</h4>
+              <p class="tc-bento-desc">Catches syndicated review templates and copy-paste astroturfing campaigns reused across multiple buyer accounts.</p>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="tc-bento-card tc-bento-col-4">
+            <div>
+              <div class="tc-bento-icon-wrap">
+                <i class="bi bi-bar-chart-line"></i>
+              </div>
+              <h4 class="tc-bento-title">Rating Spikes</h4>
+              <p class="tc-bento-desc">Identifies artificial rating inflation where rapid bursts of 5-star ratings mask genuine negative customer feedback.</p>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="tc-bento-card tc-bento-col-4">
+            <div>
+              <div class="tc-bento-icon-wrap">
+                <i class="bi bi-person-exclamation"></i>
+              </div>
+              <h4 class="tc-bento-title">Reviewer Behavior</h4>
+              <p class="tc-bento-desc">Flags reviews lacking realistic product specifics or situational context that verified human purchasers naturally include.</p>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="tc-bento-card tc-bento-col-4">
+            <div>
+              <div class="tc-bento-icon-wrap">
+                <i class="bi bi-clock-history"></i>
+              </div>
+              <h4 class="tc-bento-title">Timing Anomalies</h4>
+              <p class="tc-bento-desc">Flags suspicious clusters of reviews submitted in narrow temporal windows designed to manipulate storefront algorithms.</p>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="tc-bento-card tc-bento-col-4">
+            <div>
+              <div class="tc-bento-icon-wrap">
+                <i class="bi bi-gift"></i>
+              </div>
+              <h4 class="tc-bento-title">Incentivized Wording</h4>
+              <p class="tc-bento-desc">Uncovers subtle commercial disclosures, free product exchanges, and paid promotional praise disguised as impartial feedback.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. FAQ Accordion & Footer -->
+    <section id="faq" class="tc-section">
+      <div class="tc-container">
+        <div class="tc-section-header">
+          <div class="tc-section-tag">FAQ</div>
+          <h2 class="tc-section-title">Frequently Asked Questions</h2>
+          <p class="tc-section-desc">Everything you need to know about TrustCheck's detection and scoring model.</p>
+        </div>
+
+        <div class="tc-faq-wrap">
+          <div class="tc-faq-item open">
+            <button type="button" class="tc-faq-question">
+              <span>How does TrustCheck detect fake reviews?</span>
+              <i class="bi bi-chevron-down"></i>
             </button>
+            <div class="tc-faq-answer">
+              TrustCheck uses a machine learning model trained on large-scale e-commerce review corpora. It extracts lexical n-grams, evaluates structural repetition, and cross-references star ratings against written sentiment to identify telltale signs of bot-generated and astroturfed reviews.
+            </div>
+          </div>
+
+          <div class="tc-faq-item">
+            <button type="button" class="tc-faq-question">
+              <span>Which websites can I scrape automatically?</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="tc-faq-answer">
+              Our automated scraper supports Amazon and Flipkart product links. Because live e-commerce sites employ strict bot prevention, you can always paste text directly or upload any CSV file if a URL is blocked.
+            </div>
+          </div>
+
+          <div class="tc-faq-item">
+            <button type="button" class="tc-faq-question">
+              <span>What does the Trust Score represent?</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="tc-faq-answer">
+              The Trust Score is a composite 0–100 index. Scores of 70 and above indicate high authenticity. Scores between 40 and 69 suggest mixed or promotional patterns, while scores below 40 highlight significant fake review clusters.
+            </div>
+          </div>
+
+          <div class="tc-faq-item">
+            <button type="button" class="tc-faq-question">
+              <span>Is my data private?</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="tc-faq-answer">
+              Yes. All analysis is executed inside our local server environment. We do not store your uploaded review text, track user identity, or monetize private data.
+            </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- ====================================================================
-             3. ASYMMETRIC 4 KEY METRIC CARDS
-             ==================================================================== -->
-        <section class="metrics-grid">
-          <!-- Metric 1: Total Analyzed -->
-          <div class="metric-module metric-primary reveal">
-            <div>
-              <div class="metric-header">
-                <span class="metric-label">Total Reviews Analyzed</span>
-                <div class="metric-icon-badge"><i class="bi bi-layers"></i></div>
-              </div>
-              <div class="metric-value-row">
-                <span class="metric-number">{{ "{:,}".format(intel.total_analyzed) }}</span>
-                <span class="metric-trend trend-up"><i class="bi bi-arrow-up-short"></i> +18.4%</span>
-              </div>
+    <!-- Footer -->
+    <footer class="tc-footer">
+      <div class="tc-container tc-footer-inner">
+        <div class="tc-footer-disclaimer">
+          <i class="bi bi-info-circle-fill text-muted"></i>
+          <span><strong>Transparency Note:</strong> TrustCheck scores are probabilistic analytical indicators based on linguistic and statistical patterns, not legal proof of fraud. Use them as an informed decision aid.</span>
+        </div>
+
+        <div class="tc-footer-bottom">
+          <div class="tc-brand" style="font-size: 1rem;">
+            <div class="tc-brand-icon" style="width: 26px; height: 26px; border-radius: 6px;">
+              <i class="bi bi-shield-check" style="font-size: 0.85rem;"></i>
             </div>
-            <div>
-              <div class="metric-footer">
-                <span>Multi-platform ingest</span>
-                <span>Active</span>
-              </div>
-              <div class="micro-bar-track">
-                <div class="micro-bar-fill" style="width: 85%;"></div>
-              </div>
-            </div>
+            <span>TrustCheck</span>
           </div>
+          <div>© 2026 TrustCheck. Built for honest consumer trust.</div>
+        </div>
+      </div>
+    </footer>
+  </main>
 
-          <!-- Metric 2: Suspicious Reviews -->
-          <div class="metric-module metric-warning reveal">
-            <div>
-              <div class="metric-header">
-                <span class="metric-label">Suspicious / Flagged</span>
-                <div class="metric-icon-badge"><i class="bi bi-exclamation-triangle"></i></div>
-              </div>
-              <div class="metric-value-row">
-                <span class="metric-number">{{ "{:,}".format(intel.suspicious_count) }}</span>
-                <span class="metric-trend trend-down"><i class="bi bi-shield-exclamation"></i> 10.0%</span>
-              </div>
+
+  <!-- ========================================================================
+       PAGE 2: RESULTS DASHBOARD
+       ======================================================================== -->
+  <main id="page-dashboard" class="tc-page">
+    <div class="tc-container">
+      
+      <!-- Top Bar -->
+      <div class="tc-dashboard-header">
+        <div>
+          <a href="#home" class="tc-brand" onclick="navigateTo('home')">
+            <div class="tc-brand-icon">
+              <i class="bi bi-shield-check"></i>
             </div>
-            <div>
-              <div class="metric-footer">
-                <span>Pattern anomaly threshold</span>
-                <span>Requires Audit</span>
-              </div>
-              <div class="micro-bar-track">
-                <div class="micro-bar-fill" style="width: 26%;"></div>
-              </div>
-            </div>
+            <span>TrustCheck</span>
+          </a>
+          <h1 class="tc-dashboard-title mt-2">Analysis Results Report</h1>
+        </div>
+
+        <div class="tc-dashboard-actions">
+          <button type="button" id="btnNewAnalysis" class="tc-btn-outline">
+            <i class="bi bi-plus-lg"></i>
+            <span>New Analysis</span>
+          </button>
+          <button type="button" id="btnExportReport" class="tc-btn-dark-pill">
+            <i class="bi bi-download"></i>
+            <span>Export Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Product Header Card (when URL was used) -->
+      <div id="dashProductCard" class="tc-product-header-card" style="display:none;">
+        <div class="tc-product-info">
+          <span id="dashProductBadge" class="tc-platform-badge amazon">Amazon Product</span>
+          <div>
+            <h4 id="dashProductTitle" class="fw-bold mb-0" style="font-size: 1.05rem;">Verified Storefront Listing</h4>
+            <a id="dashProductLink" href="#" target="_blank" class="text-secondary small text-truncate d-inline-block" style="max-width: 500px;"></a>
           </div>
+        </div>
+        <div class="text-success small fw-semibold">
+          <i class="bi bi-check-circle-fill me-1"></i> Live Extraction Verified
+        </div>
+      </div>
 
-          <!-- Metric 3: Genuine Authentic -->
-          <div class="metric-module metric-success reveal">
-            <div>
-              <div class="metric-header">
-                <span class="metric-label">Verified Genuine</span>
-                <div class="metric-icon-badge"><i class="bi bi-patch-check"></i></div>
-              </div>
-              <div class="metric-value-row">
-                <span class="metric-number">{{ "{:,}".format(intel.genuine_count) }}</span>
-                <span class="metric-trend trend-up"><i class="bi bi-check-circle"></i> 81.2%</span>
-              </div>
-            </div>
-            <div>
-              <div class="metric-footer">
-                <span>Organic consumer consensus</span>
-                <span>Validated</span>
-              </div>
-              <div class="micro-bar-track">
-                <div class="micro-bar-fill" style="width: 81%;"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Metric 4: Trust Score -->
-          <div class="metric-module metric-cyan reveal">
-            <div>
-              <div class="metric-header">
-                <span class="metric-label">Overall Trust Index</span>
-                <div class="metric-icon-badge"><i class="bi bi-shield-lock"></i></div>
-              </div>
-              <div class="metric-value-row">
-                <span class="metric-number">{{ intel.trust_score }}</span>
-                <span class="metric-trend trend-neutral">Grade A</span>
-              </div>
-            </div>
-            <div>
-              <div class="metric-footer">
-                <span>Calibrated confidence</span>
-                <span>Robust</span>
-              </div>
-              <div class="micro-bar-track">
-                <div class="micro-bar-fill" style="width: {{ intel.trust_score }}%;"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             4. PRIMARY TRUST CENTERPIECE & AI SIGNALS (Bento Row)
-             ==================================================================== -->
-        <section class="bento-row" id="trust-intelligence">
-          <!-- Centerpiece: Radial Telemetry Dial -->
-          <div class="telemetry-card reveal">
-            <div class="card-title-row">
-              <div class="card-title-group">
-                <h3><i class="bi bi-shield-shaded" style="color: var(--brand-indigo);"></i> Authenticity Dial & Orbital Telemetry</h3>
-                <p>Synthesized algorithmic confidence score across 4 detection dimensions</p>
-              </div>
-              <span class="badge-dot" style="background: var(--brand-cyan);"></span>
-            </div>
-
-            <div class="telemetry-visual-body">
-              <!-- Radial Dial Gauge -->
-              <div class="dial-wrapper">
-                <svg class="dial-svg" viewBox="0 0 200 200">
-                  <!-- Background Track -->
-                  <circle class="dial-bg" cx="100" cy="100" r="90"></circle>
-                  <!-- Genuine Track (outer) -->
-                  <circle class="dial-meter-genuine" cx="100" cy="100" r="90"
-                          style="stroke-dasharray: 565; stroke-dashoffset: 106;"></circle>
-                  <!-- Suspicious Track (middle) -->
-                  <circle class="dial-meter-suspicious" cx="100" cy="100" r="74"
-                          style="stroke-dasharray: 465; stroke-dashoffset: 418;"></circle>
-                  <!-- Fake Track (inner) -->
-                  <circle class="dial-meter-fake" cx="100" cy="100" r="58"
-                          style="stroke-dasharray: 364; stroke-dashoffset: 331;"></circle>
+      <!-- Simplified Result Card for Single Review -->
+      <div id="dashSingleCard" class="tc-card mb-4" style="display:none;">
+        <div class="row align-items-center g-4">
+          <div class="col-md-5 text-center">
+            <!-- Semicircular Gauge (reused in single view) -->
+            <div class="tc-gauge-wrap">
+              <div class="tc-gauge-svg-container">
+                <svg viewBox="0 0 200 110" width="200" height="110">
+                  <path d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="#EBEBE6" stroke-width="16" stroke-linecap="round" />
+                  <path id="gaugeActivePath" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="var(--tc-genuine)" stroke-width="16" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s ease, stroke 0.5s ease;" />
                 </svg>
-
-                <div class="dial-center-content">
-                  <span class="dial-score-number" id="centerScoreDisplay">{{ intel.trust_score }}</span>
-                  <span class="dial-score-label">Trust Score</span>
-                  <span class="dial-confidence-tag">91.4% Confidence</span>
-                </div>
+                <div id="gaugeValueText" class="tc-gauge-value">--</div>
               </div>
+              <div id="gaugeVerdictBadge" class="tc-verdict-chip tc-verdict-trustworthy">Analyzing…</div>
+              <div id="gaugeSummaryText" class="tc-gauge-summary">Authenticity Score</div>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <span class="tc-stat-label">Pasted Review Under Audit</span>
+            <blockquote id="singleReviewQuote" class="fs-6 fst-italic text-dark my-2 p-3 rounded-2" style="background:#FAF9F5; border-left: 3px solid var(--tc-genuine);"></blockquote>
+            
+            <div class="d-flex align-items-center gap-3 my-3">
+              <div class="small text-secondary">Model Confidence: <strong id="singleConfidenceVal" class="text-dark">--%</strong></div>
+            </div>
 
-              <!-- Orbital Metrics & Natural Language Verdict -->
-              <div class="telemetry-breakdown">
-                <div class="telemetry-verdict-quote">
-                  <strong style="color: #fff; display: block; margin-bottom: 2px;">Authenticity Verdict:</strong>
-                  Review corpus displays organic consumer distribution. Detected anomalies are isolated to promotional flash spikes with negligible systemic manipulation.
-                </div>
+            <div class="small text-secondary mb-3" id="singleExplanationText"></div>
 
-                <div class="orbital-stats-grid">
-                  <div class="orbital-stat-box">
-                    <div class="stat-box-indicator">
-                      <span class="indicator-dot dot-genuine"></span>
-                      <span>Authentic</span>
-                    </div>
-                    <span class="stat-box-val">81.2%</span>
-                  </div>
-                  <div class="orbital-stat-box">
-                    <div class="stat-box-indicator">
-                      <span class="indicator-dot dot-suspicious"></span>
-                      <span>Suspicious</span>
-                    </div>
-                    <span class="stat-box-val">10.0%</span>
-                  </div>
-                  <div class="orbital-stat-box">
-                    <div class="stat-box-indicator">
-                      <span class="indicator-dot dot-fake"></span>
-                      <span>High Risk</span>
-                    </div>
-                    <span class="stat-box-val">8.8%</span>
-                  </div>
-                </div>
-              </div>
+            <h6 class="fw-bold small text-muted text-uppercase mb-2">Forensic Risk Checklist</h6>
+            <div id="singleReasonChecklist" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat Cards Row -->
+      <div class="tc-stat-cards-row">
+        <div class="tc-stat-card">
+          <div class="tc-stat-label">Total Reviews</div>
+          <div id="statTotalReviews" class="tc-stat-val">0</div>
+        </div>
+        <div class="tc-stat-card">
+          <div class="tc-stat-label">Genuine</div>
+          <div id="statGenuinePct" class="tc-stat-val genuine">0%</div>
+        </div>
+        <div class="tc-stat-card">
+          <div class="tc-stat-label">Suspicious</div>
+          <div id="statSuspiciousPct" class="tc-stat-val suspicious">0%</div>
+        </div>
+        <div class="tc-stat-card">
+          <div class="tc-stat-label">Fake / Bot</div>
+          <div id="statFakePct" class="tc-stat-val fake">0%</div>
+        </div>
+        <div class="tc-stat-card">
+          <div class="tc-stat-label">Reported Rating</div>
+          <div id="statReportedRating" class="tc-stat-val">--</div>
+        </div>
+        <div class="tc-stat-card">
+          <div class="tc-stat-label">Adjusted Genuine</div>
+          <div id="statAdjustedRating" class="tc-stat-val genuine">--</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid for Batch Mode -->
+      <div id="dashBatchGrid" class="tc-dash-grid">
+
+        <!-- 1. Overall Trust Score Gauge -->
+        <div class="tc-card tc-dash-col-4">
+          <div class="tc-card-header">
+            <h3 class="tc-card-title">Overall Trust Score</h3>
+            <span class="badge bg-light text-muted border">0–100 Scale</span>
+          </div>
+          <div class="tc-gauge-wrap">
+            <div class="tc-gauge-svg-container">
+              <svg viewBox="0 0 200 110" width="200" height="110">
+                <path d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="#EBEBE6" stroke-width="16" stroke-linecap="round" />
+                <path id="gaugeActivePath" d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="var(--tc-genuine)" stroke-width="16" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s ease, stroke 0.5s ease;" />
+              </svg>
+              <div id="gaugeValueText" class="tc-gauge-value">87</div>
+            </div>
+            <div id="gaugeVerdictBadge" class="tc-verdict-chip tc-verdict-trustworthy">Trustworthy</div>
+            <div id="gaugeSummaryText" class="tc-gauge-summary">High confidence of authentic customer feedback.</div>
+          </div>
+        </div>
+
+        <!-- 2. Genuine vs Fake Donut Chart -->
+        <div class="tc-card tc-dash-col-4">
+          <div class="tc-card-header">
+            <h3 class="tc-card-title">Authenticity Split</h3>
+            <span class="badge bg-light text-muted border">3 Segments</span>
+          </div>
+          <div class="tc-donut-container">
+            <canvas id="donutChart"></canvas>
+            <div class="tc-donut-center-text">
+              <span id="donutCenterPercent" class="tc-donut-percent">81%</span>
+              <span class="tc-donut-label">Genuine</span>
+            </div>
+          </div>
+          <div class="tc-donut-legend">
+            <div class="tc-legend-item">
+              <span class="tc-legend-dot" style="background:#16A34A;"></span>
+              <span>Genuine</span>
+            </div>
+            <div class="tc-legend-item">
+              <span class="tc-legend-dot" style="background:#D97706;"></span>
+              <span>Suspicious</span>
+            </div>
+            <div class="tc-legend-item">
+              <span class="tc-legend-dot" style="background:#E11D48;"></span>
+              <span>Fake</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Top Red Flags Horizontal Bar Chart -->
+        <div class="tc-card tc-dash-col-4">
+          <div class="tc-card-header">
+            <h3 class="tc-card-title">Top Red Flags</h3>
+            <span class="badge bg-light text-muted border">Pattern Risk</span>
+          </div>
+          <div style="height: 190px;">
+            <canvas id="redFlagsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 4. Rating Distribution (All vs Genuine) -->
+        <div class="tc-card tc-dash-col-6">
+          <div class="tc-card-header">
+            <h3 class="tc-card-title">Rating Distribution</h3>
+            <span class="badge bg-light text-muted border">Reported vs Real</span>
+          </div>
+          <div style="height: 230px;">
+            <canvas id="ratingDistChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 5. Reviews Over Time -->
+        <div class="tc-card tc-dash-col-6">
+          <div class="tc-card-header">
+            <h3 class="tc-card-title">Reviews Over Time</h3>
+            <span class="badge bg-light text-muted border">Temporal Velocity</span>
+          </div>
+          <div id="timelineDataNotice" class="small text-muted mb-2" style="display:none;"></div>
+          <div style="height: 230px;">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 6. Searchable, Filterable Reviews Table -->
+        <div class="tc-card tc-dash-col-12">
+          <div class="tc-card-header">
+            <div>
+              <h3 class="tc-card-title">Reviews Forensics Table</h3>
+              <p class="text-secondary small mb-0">Search, filter, or click any review to inspect explainable AI justifications.</p>
+            </div>
+            <span id="tableReviewsCount" class="badge bg-light text-dark border">0 reviews</span>
+          </div>
+
+          <div class="tc-table-controls">
+            <div class="tc-filter-pills">
+              <button type="button" class="tc-filter-pill active" data-filter="all">All</button>
+              <button type="button" class="tc-filter-pill" data-filter="genuine">Genuine</button>
+              <button type="button" class="tc-filter-pill" data-filter="suspicious">Suspicious</button>
+              <button type="button" class="tc-filter-pill" data-filter="fake">Fake</button>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <input type="text" id="reviewsSearchInput" class="tc-search-input" placeholder="Search review text…">
+              <select id="reviewsSortSelect" class="tc-search-input" style="width: auto;">
+                <option value="confidence-desc">Sort: Highest Confidence</option>
+                <option value="rating-desc">Sort: Highest Rating</option>
+                <option value="rating-asc">Sort: Lowest Rating</option>
+              </select>
             </div>
           </div>
 
-          <!-- AI Signals Feed -->
-          <div class="signals-card reveal">
-            <div class="card-title-row">
-              <div class="card-title-group">
-                <h3><i class="bi bi-broadcast" style="color: var(--brand-sky);"></i> Live AI Signals</h3>
-                <p>Forensic anomalies detected in recent telemetry</p>
-              </div>
-              <span class="badge-dot" style="background: var(--status-suspicious);"></span>
-            </div>
-
-            <div class="signals-list">
-              {% for signal in intel.signals %}
-              <div class="signal-item">
-                <div class="signal-meta">
-                  <span class="severity-pill sev-{{ signal.severity }}">{{ signal.severity }}</span>
-                  <span class="signal-time"><i class="bi bi-clock"></i> {{ signal.timestamp }}</span>
-                </div>
-                <div class="signal-text">{{ signal.title }}</div>
-                <button type="button" class="signal-action-btn" onclick="filterBySignal('{{ signal.type }}')">
-                  <span>Inspect pattern</span>
-                  <i class="bi bi-arrow-right-short"></i>
-                </button>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             5. LIVE REVIEW ANALYZER WORKBENCH (Interactive Explainable AI)
-             ==================================================================== -->
-        <section class="analyzer-workbench-section reveal" id="analyzer-workbench">
-          <div class="card-title-row mb-2">
-            <div class="card-title-group">
-              <h3><i class="bi bi-cpu" style="color: var(--brand-indigo);"></i> Forensic Review Analyzer Workbench</h3>
-              <p>Test individual consumer reviews for real-time risk classification or launch multi-item audit</p>
-            </div>
-          </div>
-
-          <!-- Dual Mode Tabs -->
-          <div class="workbench-tabs-nav">
-            <button class="tab-btn active" id="tabSingleMode" onclick="switchWorkbenchMode('single')">
-              <i class="bi bi-pencil-square"></i> Instant Review Analyzer
-            </button>
-            <button class="tab-btn" id="tabBatchMode" onclick="switchWorkbenchMode('batch')">
-              <i class="bi bi-collection-play"></i> Product URL & Batch CSV Audit
-            </button>
-          </div>
-
-          <!-- PANE 1: Single Review Live Analyzer -->
-          <div id="singleAnalyzerPane" class="workbench-grid">
-            <!-- Left Side: Interactive Input -->
-            <div class="input-side">
-              <label for="reviewInputArea" class="form-label text-secondary small fw-bold">INPUT REVIEW TEXT FOR NLP FORENSICS</label>
-              <textarea id="reviewInputArea" class="textarea-custom"
-                        placeholder="Paste any product review here to analyze linguistic authenticity, syntax repetition, and behavioral deception markers..."></textarea>
-
-              <div class="sample-pills-row">
-                <span class="sample-label">Load test samples:</span>
-                <button type="button" class="btn-pill-sample" onclick="loadSample('bot')">
-                  <i class="bi bi-robot"></i> Load Bot Sample
-                </button>
-                <button type="button" class="btn-pill-sample" onclick="loadSample('genuine')">
-                  <i class="bi bi-person-check"></i> Load Genuine Sample
-                </button>
-                <button type="button" class="btn-pill-sample" onclick="clearSample()">
-                  <i class="bi bi-x-circle"></i> Clear
-                </button>
-              </div>
-
-              <div class="workbench-action-row mt-2">
-                <button type="button" id="btnAnalyzeSingle" class="btn-primary-glow" onclick="executeSingleAnalysis()">
-                  <i class="bi bi-shield-check"></i>
-                  <span>Run AI Forensics</span>
-                </button>
-                <span id="analysisStatusText" class="text-muted small">Ready for input</span>
-              </div>
-            </div>
-
-            <!-- Right Side: Explainable AI Result Card -->
-            <div class="explainable-results-card" id="explainableResultsCard">
-              <div class="result-verdict-header">
-                <div>
-                  <span class="text-muted small d-block" style="font-size: 0.7rem; letter-spacing: 0.05em;">CLASSIFICATION RESULT</span>
-                  <span id="verdictBadge" class="verdict-classification-badge verdict-genuine mt-1">
-                    <i class="bi bi-patch-check"></i> Genuine Consumer Review
-                  </span>
-                </div>
-                <div class="text-end">
-                  <span class="text-muted small d-block" style="font-size: 0.7rem;">CALIBRATED CONFIDENCE</span>
-                  <span id="confidenceNumber" class="text-primary fw-bold" style="font-family: var(--font-mono); font-size: 1.15rem;">89.4%</span>
-                </div>
-              </div>
-
-              <div class="result-scores-row">
-                <div class="result-score-box">
-                  <div class="label">Trust Index</div>
-                  <div class="val text-success" id="resultTrustScore">92</div>
-                </div>
-                <div class="result-score-box">
-                  <div class="label">Composite Risk</div>
-                  <div class="val text-cyan" id="resultCompositeRisk">8%</div>
-                </div>
-              </div>
-
-              <!-- 4 Risk Spectrum Meters -->
-              <div class="risk-breakdown-list">
-                <!-- 1. Language Risk -->
-                <div class="risk-item-row">
-                  <div class="risk-item-meta">
-                    <span class="risk-name">Language Pattern Risk</span>
-                    <span class="risk-percent" id="langRiskVal">12%</span>
-                  </div>
-                  <div class="risk-spectrum-bar">
-                    <div class="risk-spectrum-fill fill-low" id="langRiskBar" style="width: 12%;"></div>
-                  </div>
-                </div>
-
-                <!-- 2. Behavioral Risk -->
-                <div class="risk-item-row">
-                  <div class="risk-item-meta">
-                    <span class="risk-name">Behavioral Anomaly Risk</span>
-                    <span class="risk-percent" id="behavRiskVal">15%</span>
-                  </div>
-                  <div class="risk-spectrum-bar">
-                    <div class="risk-spectrum-fill fill-low" id="behavRiskBar" style="width: 15%;"></div>
-                  </div>
-                </div>
-
-                <!-- 3. Semantic Similarity Risk -->
-                <div class="risk-item-row">
-                  <div class="risk-item-meta">
-                    <span class="risk-name">Semantic Similarity Risk</span>
-                    <span class="risk-percent" id="simRiskVal">10%</span>
-                  </div>
-                  <div class="risk-spectrum-bar">
-                    <div class="risk-spectrum-fill fill-low" id="simRiskBar" style="width: 10%;"></div>
-                  </div>
-                </div>
-
-                <!-- 4. Sentiment Deviation Risk -->
-                <div class="risk-item-row">
-                  <div class="risk-item-meta">
-                    <span class="risk-name">Sentiment Deviation Risk</span>
-                    <span class="risk-percent" id="sentRiskVal">8%</span>
-                  </div>
-                  <div class="risk-spectrum-bar">
-                    <div class="risk-spectrum-fill fill-low" id="sentRiskBar" style="width: 8%;"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- AI Forensic Reasoning Explanation -->
-              <div class="ai-reasoning-box" id="aiExplanationBox">
-                <i class="bi bi-cpu-fill"></i>
-                <div id="aiExplanationText">
-                  Vocabulary and syntax align with organic consumer reviews. Varied sentence structures and realistic personal experience markers detected.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PANE 2: Batch URL & CSV Ingestion (Hidden by default) -->
-          <div id="batchAnalyzerPane" style="display: none;">
-            <div class="row g-4">
-              <!-- Sub-pane A: Product URL -->
-              <div class="col-lg-6">
-                <div class="metric-module h-100 p-4">
-                  <h5 class="fw-bold mb-2 text-white"><i class="bi bi-link-45deg" style="color: var(--brand-sky);"></i> Live Store Scraper</h5>
-                  <p class="text-secondary small mb-3">Provide an Amazon or Flipkart product listing to automatically scrape customer reviews.</p>
-                  
-                  <form action="/analyze" method="post" class="analyze-batch-form" data-loading-text="Scraping storefront reviews and running ML classifier…">
-                    <input type="hidden" name="input_mode" value="url">
-                    <div class="mb-3">
-                      <label for="product_url" class="form-label text-secondary small fw-bold">PRODUCT LISTING URL</label>
-                      <input type="url" class="textarea-custom" style="height: 48px;" id="product_url" name="product_url"
-                             placeholder="https://www.amazon.in/dp/..." required>
-                    </div>
-                    <button type="submit" class="btn-primary-glow w-100 justify-content-center">
-                      <i class="bi bi-search"></i>
-                      <span>Scrape & Analyze Listing</span>
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              <!-- Sub-pane B: CSV / Bulk Paste -->
-              <div class="col-lg-6">
-                <div class="metric-module h-100 p-4">
-                  <h5 class="fw-bold mb-2 text-white"><i class="bi bi-file-earmark-spreadsheet" style="color: var(--brand-indigo);"></i> Bulk CSV / Text Import</h5>
-                  <p class="text-secondary small mb-3">Upload a CSV file (with <code>review_text</code> column) or paste multiple lines.</p>
-
-                  <form action="/analyze" method="post" enctype="multipart/form-data" class="analyze-batch-form" data-loading-text="Classifying batch dataset…">
-                    <input type="hidden" name="input_mode" value="manual">
-                    <div class="mb-3">
-                      <label for="pasted_reviews" class="form-label text-secondary small fw-bold">BULK TEXT (ONE REVIEW PER LINE)</label>
-                      <textarea class="textarea-custom" style="height: 80px;" id="pasted_reviews" name="pasted_reviews"
-                                placeholder="Awesome product!&#10;Total scam, never arrived..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                      <label for="csv_file" class="form-label text-secondary small fw-bold">OR UPLOAD CSV</label>
-                      <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv"
-                             style="background: rgba(0,0,0,0.3); border-color: var(--border-subtle); color: var(--text-primary); font-size: 0.8rem;">
-                    </div>
-                    <button type="submit" class="btn-primary-glow w-100 justify-content-center">
-                      <i class="bi bi-bar-chart-fill"></i>
-                      <span>Execute Batch Audit</span>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             6. ACTIVITY ANALYTICS & SUSPICIOUS PATTERNS (Two Column Row)
-             ==================================================================== -->
-        <section class="activity-patterns-row" id="activity-analytics">
-          <!-- Left: Review Activity Timeline (Chart.js) -->
-          <div class="chart-module-card reveal">
-            <div class="card-title-row">
-              <div class="card-title-group">
-                <h3><i class="bi bi-graph-up" style="color: var(--brand-indigo);"></i> Review Activity Timeline</h3>
-                <p>Volume trends contrasting authentic consumer submissions against flagged anomalies</p>
-              </div>
-
-              <div class="chart-filter-pills">
-                <button type="button" class="chart-filter-btn active" onclick="updateChartPeriod(this, '7D')">7D</button>
-                <button type="button" class="chart-filter-btn" onclick="updateChartPeriod(this, '30D')">30D</button>
-                <button type="button" class="chart-filter-btn" onclick="updateChartPeriod(this, '90D')">90D</button>
-              </div>
-            </div>
-
-            <div class="chart-container-box">
-              <canvas id="activityChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Right: Suspicious Patterns Matrix -->
-          <div class="patterns-module-card reveal" id="patterns-matrix">
-            <div class="card-title-row">
-              <div class="card-title-group">
-                <h3><i class="bi bi-fingerprint" style="color: var(--brand-cyan);"></i> Suspicious Patterns Matrix</h3>
-                <p>Clustering telemetry across adversarial vectors</p>
-              </div>
-              <span class="badge-dot" style="background: var(--brand-cyan);"></span>
-            </div>
-
-            <div class="patterns-list">
-              {% for p in intel.suspicious_patterns %}
-              <div class="pattern-item-box">
-                <div class="pattern-info-group">
-                  <span class="pattern-name">{{ p.name }}</span>
-                  <span class="pattern-delta">{{ p.delta }}</span>
-                </div>
-                <div class="pattern-telemetry-badge">
-                  <span class="pattern-count">{{ p.count }}</span>
-                  <span class="risk-chip risk-{{ p.risk_level }}">{{ p.risk_level }}</span>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             7. HOW THE AI WORKS PIPELINE VISUALIZATION
-             ==================================================================== -->
-        <section class="pipeline-section reveal" id="pipeline-section">
-          <div class="card-title-row mb-2">
-            <div class="card-title-group">
-              <h3><i class="bi bi-diagram-2" style="color: var(--brand-sky);"></i> Algorithmic Forensics Architecture</h3>
-              <p>End-to-end classification pipeline transforming raw reviews into actionable integrity telemetry</p>
-            </div>
-          </div>
-
-          <div class="pipeline-grid">
-            <!-- Step 1 -->
-            <div class="pipeline-node">
-              <div class="node-number">01</div>
-              <div class="node-title">Multi-Source Ingestion</div>
-              <div class="node-desc">Direct storefront scraping or batch ingestion of raw review strings and temporal metadata.</div>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="pipeline-node">
-              <div class="node-number">02</div>
-              <div class="node-title">NLP Preprocessing</div>
-              <div class="node-desc">Lexical tokenization, emoji extraction, negation handling, and syntactic anomaly normalization.</div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="pipeline-node">
-              <div class="node-number">03</div>
-              <div class="node-title">TF-IDF Vector Space</div>
-              <div class="node-desc">Multi-gram n-gram vectorization indexing rare phrase signatures and deceptive patterns.</div>
-            </div>
-
-            <!-- Step 4 -->
-            <div class="pipeline-node">
-              <div class="node-number">04</div>
-              <div class="node-title">Neural Classifier</div>
-              <div class="node-desc">Calibrated ensemble machine learning evaluating authenticity probabilities against ground-truth corpus.</div>
-            </div>
-
-            <!-- Step 5 -->
-            <div class="pipeline-node">
-              <div class="node-number">05</div>
-              <div class="node-title">Explainable Scoring</div>
-              <div class="node-desc">Disaggregation into 4 risk spectrums: linguistic, behavioral, semantic similarity, and sentiment deviation.</div>
-            </div>
-
-            <!-- Step 6 -->
-            <div class="pipeline-node">
-              <div class="node-number">06</div>
-              <div class="node-title">Trust Index Calibration</div>
-              <div class="node-desc">Final calibrated 0-100 composite Trust Index and instant actionable fraud alerts.</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             8. RECENT REVIEWS INTELLIGENCE TABLE
-             ==================================================================== -->
-        <section class="table-section-card reveal" id="recent-reviews">
-          <div class="card-title-row">
-            <div class="card-title-group">
-              <h3><i class="bi bi-table" style="color: var(--brand-indigo);"></i> Recent Reviews Stream</h3>
-              <p>Click any row to open deep forensic drawer inspection</p>
-            </div>
-
-            <div class="table-controls-row">
-              <div class="table-filter-group" id="tableFilterGroup">
-                <button type="button" class="btn-filter-tag active" data-filter="all" onclick="filterTable('all', this)">All ({{ intel.recent_reviews|length }})</button>
-                <button type="button" class="btn-filter-tag" data-filter="Genuine" onclick="filterTable('Genuine', this)">Genuine</button>
-                <button type="button" class="btn-filter-tag" data-filter="Suspicious" onclick="filterTable('Suspicious', this)">Suspicious</button>
-                <button type="button" class="btn-filter-tag" data-filter="Fake" onclick="filterTable('Fake', this)">High Risk</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="table-responsive-wrapper">
-            <table class="intelligence-table">
+          <div class="tc-table-responsive">
+            <table class="tc-reviews-table">
               <thead>
                 <tr>
-                  <th style="width: 42%;">Review Content</th>
-                  <th>Platform</th>
+                  <th style="width: 50%;">Review Content</th>
                   <th>Rating</th>
-                  <th>Classification</th>
-                  <th>Trust Score</th>
-                  <th>Action</th>
+                  <th>Date</th>
+                  <th>Label Badge</th>
+                  <th>Confidence</th>
                 </tr>
               </thead>
               <tbody id="reviewsTableBody">
-                {% for r in intel.recent_reviews %}
-                <tr class="review-table-row" data-label="{{ r.label }}" onclick="openReviewDrawer({{ loop.index0 }})">
-                  <td class="review-snippet-cell">
-                    <span class="review-snippet-text">{{ r.text }}</span>
-                  </td>
-                  <td>
-                    <span class="platform-pill p-{{ r.platform.lower() }}">
-                      <i class="bi bi-shield"></i> {{ r.platform }}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="fw-bold text-white">{{ r.rating }}★</span>
-                  </td>
-                  <td>
-                    {% if r.label == 'Genuine' %}
-                      <span class="verdict-classification-badge verdict-genuine" style="font-size: 0.72rem; padding: 2px 8px;">
-                        <i class="bi bi-check-circle"></i> Genuine
-                      </span>
-                    {% elif r.label == 'Suspicious' %}
-                      <span class="verdict-classification-badge verdict-suspicious" style="font-size: 0.72rem; padding: 2px 8px;">
-                        <i class="bi bi-exclamation-triangle"></i> Suspicious
-                      </span>
-                    {% else %}
-                      <span class="verdict-classification-badge verdict-fake" style="font-size: 0.72rem; padding: 2px 8px;">
-                        <i class="bi bi-shield-x"></i> High Risk
-                      </span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    <span class="table-score-val">{{ r.trust_score }}</span>
-                    <span class="text-muted small">/100</span>
-                  </td>
-                  <td>
-                    <button type="button" class="btn-icon" style="width: 28px; height: 28px;" title="Inspect forensics">
-                      <i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i>
-                    </button>
-                  </td>
-                </tr>
-                {% endfor %}
+                <!-- Dynamically populated -->
               </tbody>
             </table>
           </div>
-        </section>
+        </div>
 
       </div>
-    </main>
+    </div>
+  </main>
+
+
+  <!-- ========================================================================
+       SLIDE-OUT FORENSIC DRAWER
+       ======================================================================== -->
+  <div id="forensicDrawer" class="tc-drawer-backdrop">
+    <div class="tc-drawer-panel">
+      <div class="tc-drawer-header">
+        <div>
+          <span class="tc-stat-label">Explainable AI Audit</span>
+          <h4 class="tc-drawer-title">Review Deep Dive</h4>
+        </div>
+        <button type="button" id="btnCloseDrawer" class="tc-drawer-close">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <div class="tc-drawer-body">
+        <div>
+          <span class="tc-stat-label">Full Review Text</span>
+          <p id="drawerReviewText" class="p-3 rounded-2 text-dark mt-1" style="background:#FAF9F5; border: 1px solid #EDEDE8; font-size: 0.925rem; line-height: 1.5;"></p>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between p-3 rounded-2" style="background:#F6F6F3;">
+          <div>
+            <div class="text-secondary small">Model Verdict</div>
+            <span id="drawerLabelBadge" class="tc-badge-label tc-badge-genuine mt-1">Genuine</span>
+          </div>
+          <div class="text-end">
+            <div class="text-secondary small">Confidence</div>
+            <strong id="drawerConfidence" class="fs-5 text-dark">92%</strong>
+          </div>
+        </div>
+
+        <div>
+          <span class="tc-stat-label">Linguistic & Behavioral Justification</span>
+          <p id="drawerExplanation" class="text-secondary small mt-1" style="line-height: 1.55;"></p>
+        </div>
+
+        <div>
+          <span class="tc-stat-label mb-2 d-block">4-Vector Risk Spectrums</span>
+          <div class="d-flex flex-column gap-3">
+            <!-- Spectrum 1 -->
+            <div class="tc-risk-spectrum-bar">
+              <div class="tc-risk-bar-meta">
+                <span>1. Language Pattern Risk</span>
+                <span id="drawerLangVal">24%</span>
+              </div>
+              <div class="tc-risk-bar-track">
+                <div id="drawerLangBar" class="tc-risk-bar-fill" style="width: 24%; background: var(--tc-genuine);"></div>
+              </div>
+            </div>
+
+            <!-- Spectrum 2 -->
+            <div class="tc-risk-spectrum-bar">
+              <div class="tc-risk-bar-meta">
+                <span>2. Behavioral Anomaly Risk</span>
+                <span id="drawerBehaviorVal">18%</span>
+              </div>
+              <div class="tc-risk-bar-track">
+                <div id="drawerBehaviorBar" class="tc-risk-bar-fill" style="width: 18%; background: var(--tc-genuine);"></div>
+              </div>
+            </div>
+
+            <!-- Spectrum 3 -->
+            <div class="tc-risk-spectrum-bar">
+              <div class="tc-risk-bar-meta">
+                <span>3. Semantic Similarity Risk</span>
+                <span id="drawerSimVal">12%</span>
+              </div>
+              <div class="tc-risk-bar-track">
+                <div id="drawerSimBar" class="tc-risk-bar-fill" style="width: 12%; background: var(--tc-genuine);"></div>
+              </div>
+            </div>
+
+            <!-- Spectrum 4 -->
+            <div class="tc-risk-spectrum-bar">
+              <div class="tc-risk-bar-meta">
+                <span>4. Sentiment Polarity Risk</span>
+                <span id="drawerSentimentVal">32%</span>
+              </div>
+              <div class="tc-risk-bar-track">
+                <div id="drawerSentimentBar" class="tc-risk-bar-fill" style="width: 32%; background: var(--tc-genuine);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- ====================================================================
-       9. SLIDE-OUT REVIEW DETAIL DRAWER
-       ==================================================================== -->
-  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeReviewDrawer()"></div>
-  <aside class="review-detail-drawer" id="reviewDetailDrawer">
-    <div class="drawer-header">
-      <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-search" style="color: var(--brand-sky);"></i>
-        <h4>Review Forensic Inspection</h4>
-      </div>
-      <button type="button" class="btn-drawer-close" onclick="closeReviewDrawer()" title="Close drawer">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
 
-    <div class="drawer-body">
-      <!-- Top meta -->
-      <div class="d-flex align-items-center justify-content-between">
-        <span id="drawerVerdictBadge" class="verdict-classification-badge verdict-genuine">Genuine</span>
-        <span id="drawerPlatformTag" class="platform-pill p-amazon">Platform: Amazon</span>
-      </div>
+  <!-- ========================================================================
+       MULTI-STEP LOADING MODAL OVERLAY
+       ======================================================================== -->
+  <div id="loadingOverlay" class="tc-loading-overlay">
+    <div class="tc-loading-card">
+      <div class="tc-loading-spinner"></div>
+      <h3 id="loadingTitle" class="tc-loading-title">Collecting reviews...</h3>
 
-      <!-- Raw text block -->
-      <div class="drawer-section-block">
-        <h6>Raw Review Text</h6>
-        <div class="drawer-review-quote" id="drawerReviewText">
-          Loading review content...
+      <div class="tc-loading-steps">
+        <div class="tc-step-item active">
+          <div class="tc-step-icon"><i class="bi bi-circle"></i></div>
+          <span>Collecting reviews...</span>
+        </div>
+        <div class="tc-step-item">
+          <div class="tc-step-icon"><i class="bi bi-circle"></i></div>
+          <span>Analyzing language patterns...</span>
+        </div>
+        <div class="tc-step-item">
+          <div class="tc-step-icon"><i class="bi bi-circle"></i></div>
+          <span>Checking reviewer behavior...</span>
+        </div>
+        <div class="tc-step-item">
+          <div class="tc-step-icon"><i class="bi bi-circle"></i></div>
+          <span>Building report...</span>
         </div>
       </div>
 
-      <!-- Forensics Breakdown -->
-      <div class="drawer-section-block">
-        <h6>Risk Spectrum Telemetry</h6>
-        <div class="risk-breakdown-list">
-          <div class="risk-item-row">
-            <div class="risk-item-meta">
-              <span class="risk-name">Language Pattern Risk</span>
-              <span class="risk-percent" id="drawerLangRisk">0%</span>
-            </div>
-            <div class="risk-spectrum-bar">
-              <div class="risk-spectrum-fill fill-low" id="drawerLangBar" style="width: 0%;"></div>
-            </div>
-          </div>
-          <div class="risk-item-row">
-            <div class="risk-item-meta">
-              <span class="risk-name">Behavioral Anomaly Risk</span>
-              <span class="risk-percent" id="drawerBehavRisk">0%</span>
-            </div>
-            <div class="risk-spectrum-bar">
-              <div class="risk-spectrum-fill fill-low" id="drawerBehavBar" style="width: 0%;"></div>
-            </div>
-          </div>
-          <div class="risk-item-row">
-            <div class="risk-item-meta">
-              <span class="risk-name">Semantic Similarity Risk</span>
-              <span class="risk-percent" id="drawerSimRisk">0%</span>
-            </div>
-            <div class="risk-spectrum-bar">
-              <div class="risk-spectrum-fill fill-low" id="drawerSimBar" style="width: 0%;"></div>
-            </div>
-          </div>
-          <div class="risk-item-row">
-            <div class="risk-item-meta">
-              <span class="risk-name">Sentiment Deviation Risk</span>
-              <span class="risk-percent" id="drawerSentRisk">0%</span>
-            </div>
-            <div class="risk-spectrum-bar">
-              <div class="risk-spectrum-fill fill-low" id="drawerSentBar" style="width: 0%;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pattern Tags -->
-      <div class="drawer-section-block">
-        <h6>Detected Linguistic Markers</h6>
-        <div class="drawer-signals-tags" id="drawerPatternTags">
-          <span class="signal-tag-pill">Personal Experience Marker</span>
-          <span class="signal-tag-pill">Organic Phrasing</span>
-        </div>
-      </div>
-
-      <!-- Natural language explainable AI summary -->
-      <div class="drawer-section-block">
-        <h6>AI Explanation</h6>
-        <div class="ai-reasoning-box">
-          <i class="bi bi-info-circle"></i>
-          <span id="drawerExplanationText">Forensic evaluation indicates normal consumer sentence distribution.</span>
-        </div>
+      <div class="tc-progress-bar-wrap">
+        <div id="loadingProgressBar" class="tc-progress-bar-fill"></div>
       </div>
     </div>
+  </div>
 
-    <div class="drawer-footer">
-      <button type="button" class="btn-pill-sample" onclick="exportReviewJson()">
-        <i class="bi bi-download"></i> Export JSON
-      </button>
-      <button type="button" class="btn-primary-glow" style="padding: 0.45rem 1.2rem; font-size: 0.8rem;" onclick="closeReviewDrawer()">
-        Done
-      </button>
-    </div>
-  </aside>
-
-  <!-- SCRIPTS -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <script src="{{ url_for('static', filename='bg-network.js') }}"></script>
-  <script>
-    // Embedded Telemetry Data from Backend
-    const RECENT_REVIEWS = {{ intel.recent_reviews | tojson }};
-    const TIMELINE_DATA = {{ intel.activity_timeline | tojson }};
-
-    // Staggered Reveal Animation
-    document.querySelectorAll('.reveal').forEach((el, i) => {
-      el.style.animationDelay = (i * 0.06) + 's';
-    });
-
-    // Chart.js - Review Activity Timeline
-    let activityChart = null;
-    function initActivityChart() {
-      const ctx = document.getElementById('activityChart');
-      if (!ctx) return;
-
-      const labels = TIMELINE_DATA['7D'].labels;
-      const genuineData = TIMELINE_DATA['7D'].genuine;
-      const suspiciousData = TIMELINE_DATA['7D'].suspicious;
-
-      activityChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Verified Genuine',
-              data: genuineData,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              borderWidth: 2.5,
-              tension: 0.38,
-              fill: true,
-              pointRadius: 4,
-              pointBackgroundColor: '#10b981',
-              pointHoverRadius: 6,
-            },
-            {
-              label: 'Flagged / Suspicious',
-              data: suspiciousData,
-              borderColor: '#ef4444',
-              backgroundColor: 'rgba(239, 68, 68, 0.06)',
-              borderWidth: 2,
-              tension: 0.38,
-              fill: true,
-              pointRadius: 3,
-              pointBackgroundColor: '#ef4444',
-              pointHoverRadius: 6,
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              align: 'end',
-              labels: {
-                color: '#94a3b8',
-                font: { family: 'Inter', size: 11, weight: 600 },
-                boxWidth: 12,
-                usePointStyle: true,
-                pointStyle: 'circle',
-              }
-            },
-            tooltip: {
-              backgroundColor: '#111522',
-              titleColor: '#fff',
-              bodyColor: '#94a3b8',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
-              borderWidth: 1,
-              padding: 10,
-              displayColors: true,
-              callbacks: {
-                label: function(context) {
-                  return ' ' + context.dataset.label + ': ' + context.raw.toLocaleString() + ' reviews';
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: 'rgba(255, 255, 255, 0.03)' },
-              ticks: { color: '#64748b', font: { family: 'Inter', size: 10 } }
-            },
-            y: {
-              beginAtZero: true,
-              grid: { color: 'rgba(255, 255, 255, 0.03)' },
-              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
-            }
-          }
-        }
-      });
-    }
-
-    function updateChartPeriod(btn, period) {
-      document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (activityChart && TIMELINE_DATA[period]) {
-        activityChart.data.labels = TIMELINE_DATA[period].labels;
-        activityChart.data.datasets[0].data = TIMELINE_DATA[period].genuine;
-        activityChart.data.datasets[1].data = TIMELINE_DATA[period].suspicious;
-        activityChart.update();
-      }
-    }
-
-    // Workbench Mode Switching
-    function switchWorkbenchMode(mode) {
-      const singleTab = document.getElementById('tabSingleMode');
-      const batchTab = document.getElementById('tabBatchMode');
-      const singlePane = document.getElementById('singleAnalyzerPane');
-      const batchPane = document.getElementById('batchAnalyzerPane');
-
-      if (mode === 'single') {
-        singleTab.classList.add('active');
-        batchTab.classList.remove('active');
-        singlePane.style.display = 'grid';
-        batchPane.style.display = 'none';
-      } else {
-        batchTab.classList.add('active');
-        singleTab.classList.remove('active');
-        singlePane.style.display = 'none';
-        batchPane.style.display = 'block';
-      }
-    }
-
-    // Test Samples for Single Review Analyzer
-    const SAMPLE_BOT = "AMAZING! BEST PRODUCT EVER IN HUMAN HISTORY 10/10 MUST BUY RECOMMEND TO EVERYONE DO NOT HESITATE WOW WOW WOW FIVE STARS ALL THE WAY!!";
-    const SAMPLE_GENUINE = "I've been using this keyboard for 3 weeks now. The tactile switches feel solid for daily typing, though the wrist rest is a bit stiff. Battery life easily lasts 4 days between charges.";
-
-    function loadSample(type) {
-      const area = document.getElementById('reviewInputArea');
-      if (type === 'bot') area.value = SAMPLE_BOT;
-      else if (type === 'genuine') area.value = SAMPLE_GENUINE;
-    }
-
-    function clearSample() {
-      document.getElementById('reviewInputArea').value = '';
-    }
-
-    // Single Review Real-time Analysis via API
-    async function executeSingleAnalysis() {
-      const area = document.getElementById('reviewInputArea');
-      const text = area.value.trim();
-      if (!text) {
-        alert('Please paste or write a review before running AI forensics.');
-        return;
-      }
-
-      const btn = document.getElementById('btnAnalyzeSingle');
-      const statusText = document.getElementById('analysisStatusText');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Classifying…';
-      statusText.textContent = 'Extracting linguistic vectors and scoring anomalies…';
-
-      try {
-        const resp = await fetch('/api/analyze-single', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: text })
-        });
-
-        if (!resp.ok) throw new Error('Classification request failed.');
-        const data = await resp.json();
-
-        // Update UI with response
-        updateExplainableResults(data);
-        statusText.textContent = 'Analysis complete in 24ms.';
-      } catch (err) {
-        console.error(err);
-        statusText.textContent = 'Error connecting to model engine.';
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-shield-check"></i><span>Run AI Forensics</span>';
-      }
-    }
-
-    function updateExplainableResults(data) {
-      const badge = document.getElementById('verdictBadge');
-      const conf = document.getElementById('confidenceNumber');
-      const trustScore = document.getElementById('resultTrustScore');
-      const compRisk = document.getElementById('resultCompositeRisk');
-
-      conf.textContent = data.confidence + '%';
-      trustScore.textContent = data.trust_score;
-      compRisk.textContent = (100 - data.trust_score) + '%';
-
-      if (data.label === 'Fake') {
-        badge.className = 'verdict-classification-badge verdict-fake mt-1';
-        badge.innerHTML = '<i class="bi bi-shield-x"></i> High Risk Synthetic Review';
-        trustScore.className = 'val text-danger';
-      } else if (data.label === 'Suspicious') {
-        badge.className = 'verdict-classification-badge verdict-suspicious mt-1';
-        badge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Suspicious / Anomalous';
-        trustScore.className = 'val text-warning';
-      } else {
-        badge.className = 'verdict-classification-badge verdict-genuine mt-1';
-        badge.innerHTML = '<i class="bi bi-patch-check"></i> Genuine Consumer Review';
-        trustScore.className = 'val text-success';
-      }
-
-      // Update 4 Spectrum Bars
-      setSpectrumBar('langRiskVal', 'langRiskBar', data.language_risk);
-      setSpectrumBar('behavRiskVal', 'behavRiskBar', data.behavior_risk);
-      setSpectrumBar('simRiskVal', 'simRiskBar', data.similarity_risk);
-      setSpectrumBar('sentRiskVal', 'sentRiskBar', data.sentiment_risk);
-
-      // Update explanation text
-      document.getElementById('aiExplanationText').textContent = data.explanation;
-    }
-
-    function setSpectrumBar(valId, barId, percent) {
-      const valEl = document.getElementById(valId);
-      const barEl = document.getElementById(barId);
-      valEl.textContent = percent + '%';
-      barEl.style.width = percent + '%';
-
-      if (percent >= 60) {
-        barEl.className = 'risk-spectrum-fill fill-critical';
-      } else if (percent >= 35) {
-        barEl.className = 'risk-spectrum-fill fill-moderate';
-      } else {
-        barEl.className = 'risk-spectrum-fill fill-low';
-      }
-    }
-
-    // Review Detail Slide-out Drawer
-    let currentDrawerIndex = 0;
-    function openReviewDrawer(index) {
-      currentDrawerIndex = index;
-      const review = RECENT_REVIEWS[index];
-      if (!review) return;
-
-      const drawer = document.getElementById('reviewDetailDrawer');
-      const backdrop = document.getElementById('drawerBackdrop');
-
-      document.getElementById('drawerReviewText').textContent = review.text;
-      document.getElementById('drawerPlatformTag').textContent = 'Platform: ' + review.platform;
-      document.getElementById('drawerPlatformTag').className = 'platform-pill p-' + review.platform.toLowerCase();
-
-      const badge = document.getElementById('drawerVerdictBadge');
-      if (review.label === 'Fake') {
-        badge.className = 'verdict-classification-badge verdict-fake';
-        badge.innerHTML = '<i class="bi bi-shield-x"></i> High Risk Synthetic';
-      } else if (review.label === 'Suspicious') {
-        badge.className = 'verdict-classification-badge verdict-suspicious';
-        badge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Suspicious';
-      } else {
-        badge.className = 'verdict-classification-badge verdict-genuine';
-        badge.innerHTML = '<i class="bi bi-patch-check"></i> Genuine';
-      }
-
-      // Risk bars in drawer
-      setSpectrumBar('drawerLangRisk', 'drawerLangBar', review.language_risk);
-      setSpectrumBar('drawerBehavRisk', 'drawerBehavBar', review.behavior_risk);
-      setSpectrumBar('drawerSimRisk', 'drawerSimBar', review.similarity_risk);
-      setSpectrumBar('drawerSentRisk', 'drawerSentBar', review.sentiment_risk);
-
-      // Pattern tags
-      const tagsContainer = document.getElementById('drawerPatternTags');
-      tagsContainer.innerHTML = '';
-      if (review.patterns && review.patterns.length > 0) {
-        review.patterns.forEach(tag => {
-          const span = document.createElement('span');
-          span.className = 'signal-tag-pill';
-          span.textContent = tag;
-          tagsContainer.appendChild(span);
-        });
-      } else {
-        const span = document.createElement('span');
-        span.className = 'signal-tag-pill';
-        span.textContent = 'Organic phrasing';
-        tagsContainer.appendChild(span);
-      }
-
-      document.getElementById('drawerExplanationText').textContent = review.explanation || 'Authentic review structure.';
-
-      drawer.classList.add('active');
-      backdrop.classList.add('active');
-    }
-
-    function closeReviewDrawer() {
-      document.getElementById('reviewDetailDrawer').classList.remove('active');
-      document.getElementById('drawerBackdrop').classList.remove('active');
-    }
-
-    function exportReviewJson() {
-      const review = RECENT_REVIEWS[currentDrawerIndex];
-      const blob = new Blob([JSON.stringify(review, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `trustcheck-audit-review-${currentDrawerIndex + 1}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // Table Filtering
-    function filterTable(filter, btn) {
-      document.querySelectorAll('#tableFilterGroup .btn-filter-tag').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      document.querySelectorAll('.review-table-row').forEach(row => {
-        const label = row.getAttribute('data-label');
-        if (filter === 'all' || label === filter) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    }
-
-    // Filter by Signal Click
-    function filterBySignal(signalType) {
-      document.getElementById('recent-reviews').scrollIntoView({ behavior: 'smooth' });
-      const fakeBtn = document.querySelector('#tableFilterGroup [data-filter="Fake"]');
-      if (fakeBtn) fakeBtn.click();
-    }
-
-    // Global Search Filter
-    document.getElementById('globalSearchInput').addEventListener('input', function(e) {
-      const q = e.target.value.toLowerCase();
-      document.querySelectorAll('.review-table-row').forEach(row => {
-        const text = row.querySelector('.review-snippet-text').textContent.toLowerCase();
-        row.style.display = text.includes(q) ? '' : 'none';
-      });
-    });
-
-    // Loading Overlay for Batch Forms
-    document.querySelectorAll('.analyze-batch-form').forEach(form => {
-      form.addEventListener('submit', function() {
-        const btn = form.querySelector('button[type=submit]');
-        if (btn) {
-          btn.disabled = true;
-          btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Analyzing…';
-        }
-        const overlay = document.getElementById('loadingOverlay');
-        const overlayText = document.getElementById('loadingOverlayText');
-        overlayText.textContent = form.getAttribute('data-loading-text') || 'Processing…';
-        overlay.classList.add('active');
-      });
-    });
-
-    // Initialize Chart on Load
-    document.addEventListener('DOMContentLoaded', () => {
-      initActivityChart();
-    });
-  </script>
+  <!-- Main Modular App Script -->
+  <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
