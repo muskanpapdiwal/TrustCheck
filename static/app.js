@@ -385,19 +385,13 @@ export function renderDashboard() {
   document.getElementById('statReportedRating').textContent = reportedRating;
   document.getElementById('statAdjustedRating').textContent = genuineRating;
 
-  // 3. Genuine vs Fake Donut Chart
-  renderDonutChart(pctGenuine, pctSuspicious, pctFake, totalReviews);
-
-  // 4. Rating Distribution Bar Chart
-  renderRatingDistChart(data.rating_distribution);
-
-  // 5. Top Red Flags Bar Chart
+  // 2. Top Red Flags Bar Chart
   renderRedFlagsChart(data.top_keywords, data.reviews);
 
-  // 6. Reviews Over Time Chart
-  renderTimelineChart(data.reviews);
+  // 3. Rating Distribution Bar Chart
+  renderRatingDistChart(data.rating_distribution);
 
-  // 7. Reviews Table
+  // 4. Reviews Table
   renderReviewsTable();
 }
 

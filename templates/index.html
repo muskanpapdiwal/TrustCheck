@@ -512,7 +512,7 @@
       <div id="dashBatchGrid" class="tc-dash-grid">
 
         <!-- 1. Overall Trust Score Gauge -->
-        <div class="tc-card tc-dash-col-4">
+        <div class="tc-card tc-dash-col-6">
           <div class="tc-card-header">
             <h3 class="tc-card-title">Overall Trust Score</h3>
             <span class="badge bg-light text-muted border">0–100 Scale</span>
@@ -530,37 +530,8 @@
           </div>
         </div>
 
-        <!-- 2. Genuine vs Fake Donut Chart -->
-        <div class="tc-card tc-dash-col-4">
-          <div class="tc-card-header">
-            <h3 class="tc-card-title">Authenticity Split</h3>
-            <span class="badge bg-light text-muted border">3 Segments</span>
-          </div>
-          <div class="tc-donut-container">
-            <canvas id="donutChart"></canvas>
-            <div class="tc-donut-center-text">
-              <span id="donutCenterPercent" class="tc-donut-percent">81%</span>
-              <span class="tc-donut-label">Genuine</span>
-            </div>
-          </div>
-          <div class="tc-donut-legend">
-            <div class="tc-legend-item">
-              <span class="tc-legend-dot" style="background:#16A34A;"></span>
-              <span>Genuine</span>
-            </div>
-            <div class="tc-legend-item">
-              <span class="tc-legend-dot" style="background:#D97706;"></span>
-              <span>Suspicious</span>
-            </div>
-            <div class="tc-legend-item">
-              <span class="tc-legend-dot" style="background:#E11D48;"></span>
-              <span>Fake</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Top Red Flags Horizontal Bar Chart -->
-        <div class="tc-card tc-dash-col-4">
+        <!-- 2. Top Red Flags Horizontal Bar Chart -->
+        <div class="tc-card tc-dash-col-6">
           <div class="tc-card-header">
             <h3 class="tc-card-title">Top Red Flags</h3>
             <span class="badge bg-light text-muted border">Pattern Risk</span>
@@ -570,26 +541,14 @@
           </div>
         </div>
 
-        <!-- 4. Rating Distribution (All vs Genuine) -->
-        <div class="tc-card tc-dash-col-6">
+        <!-- 3. Rating Distribution (All vs Genuine) -->
+        <div class="tc-card tc-dash-col-12">
           <div class="tc-card-header">
             <h3 class="tc-card-title">Rating Distribution</h3>
             <span class="badge bg-light text-muted border">Reported vs Real</span>
           </div>
           <div style="height: 230px;">
             <canvas id="ratingDistChart"></canvas>
-          </div>
-        </div>
-
-        <!-- 5. Reviews Over Time -->
-        <div class="tc-card tc-dash-col-6">
-          <div class="tc-card-header">
-            <h3 class="tc-card-title">Reviews Over Time</h3>
-            <span class="badge bg-light text-muted border">Temporal Velocity</span>
-          </div>
-          <div id="timelineDataNotice" class="small text-muted mb-2" style="display:none;"></div>
-          <div style="height: 230px;">
-            <canvas id="timelineChart"></canvas>
           </div>
         </div>
 
