@@ -27,32 +27,68 @@
   <header class="tc-navbar-wrapper">
     <div class="tc-container">
       <nav class="tc-navbar">
-        <a href="#home" class="tc-brand" onclick="navigateTo('home')">
+        <a href="#home" class="tc-brand" data-nav-target="home" onclick="if(window.navigateTo) navigateTo('home'); return false;">
           <div class="tc-brand-icon">
             <i class="bi bi-shield-check"></i>
           </div>
           <span>TrustCheck</span>
         </a>
 
-        <div class="tc-nav-links">
-          <a href="#home" class="tc-nav-link" onclick="navigateTo('home')">Home</a>
-          <a href="#dashboard" class="tc-nav-link" onclick="navigateTo('dashboard')"><i class="bi bi-pie-chart me-1"></i> Dashboard</a>
-          <a href="#features" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">How It Works</a>
-          <a href="#bento" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">Features</a>
-          <a href="#faq" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">FAQ</a>
+        <!-- Desktop Nav Links -->
+        <div class="tc-nav-links" id="desktopNavLinks">
+          <a href="#home" class="tc-nav-link active" data-nav-target="home" onclick="if(window.navigateTo) navigateTo('home'); return false;">Home</a>
+          <a href="#dashboard" class="tc-nav-link" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;"><i class="bi bi-pie-chart me-1"></i> Dashboard</a>
+          <a href="#features" class="tc-nav-link" data-nav-target="features" onclick="if(window.navigateTo) navigateTo('features'); return false;">How It Works</a>
+          <a href="#bento" class="tc-nav-link" data-nav-target="bento" onclick="if(window.navigateTo) navigateTo('bento'); return false;">Features</a>
+          <a href="#faq" class="tc-nav-link" data-nav-target="faq" onclick="if(window.navigateTo) navigateTo('faq'); return false;">FAQ</a>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
-          <a href="#dashboard" class="tc-btn-outline" onclick="navigateTo('dashboard')">
+        <!-- Desktop Action Buttons -->
+        <div class="tc-nav-actions d-none d-md-flex align-items-center gap-2">
+          <a href="#dashboard" class="tc-btn-outline" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;">
             <i class="bi bi-graph-up-arrow"></i>
             <span>View Dashboard</span>
           </a>
-          <a href="#analyzer" class="tc-btn-dark-pill" onclick="if(window.location.hash!=='#home') navigateTo('home')">
+          <a href="#analyzer" class="tc-btn-dark-pill" data-nav-target="analyzer" onclick="if(window.navigateTo) navigateTo('analyzer'); return false;">
             <i class="bi bi-search"></i>
             <span>Analyze Reviews</span>
           </a>
         </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button type="button" class="tc-mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu">
+          <i class="bi bi-list"></i>
+        </button>
       </nav>
+
+      <!-- Mobile Dropdown Navigation Menu -->
+      <div class="tc-mobile-nav-menu" id="mobileNavMenu">
+        <div class="tc-mobile-nav-links">
+          <a href="#home" class="tc-mobile-nav-link active" data-nav-target="home" onclick="if(window.navigateTo) navigateTo('home'); return false;">
+            <i class="bi bi-house me-2"></i> Home
+          </a>
+          <a href="#dashboard" class="tc-mobile-nav-link" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;">
+            <i class="bi bi-pie-chart me-2"></i> Dashboard
+          </a>
+          <a href="#features" class="tc-mobile-nav-link" data-nav-target="features" onclick="if(window.navigateTo) navigateTo('features'); return false;">
+            <i class="bi bi-gear me-2"></i> How It Works
+          </a>
+          <a href="#bento" class="tc-mobile-nav-link" data-nav-target="bento" onclick="if(window.navigateTo) navigateTo('bento'); return false;">
+            <i class="bi bi-grid me-2"></i> Features
+          </a>
+          <a href="#faq" class="tc-mobile-nav-link" data-nav-target="faq" onclick="if(window.navigateTo) navigateTo('faq'); return false;">
+            <i class="bi bi-question-circle me-2"></i> FAQ
+          </a>
+        </div>
+        <div class="tc-mobile-nav-ctas">
+          <a href="#dashboard" class="tc-btn-outline text-center" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;">
+            <i class="bi bi-graph-up-arrow me-1"></i> View Dashboard
+          </a>
+          <a href="#analyzer" class="tc-btn-dark-pill text-center" data-nav-target="analyzer" onclick="if(window.navigateTo) navigateTo('analyzer'); return false;">
+            <i class="bi bi-search me-1"></i> Analyze Reviews
+          </a>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -412,7 +448,7 @@
       <!-- Top Bar -->
       <div class="tc-dashboard-header">
         <div>
-          <a href="#home" class="tc-brand" onclick="navigateTo('home')">
+          <a href="#home" class="tc-brand" data-nav-target="home" onclick="if(window.navigateTo) navigateTo('home'); return false;">
             <div class="tc-brand-icon">
               <i class="bi bi-shield-check"></i>
             </div>
@@ -422,7 +458,7 @@
         </div>
 
         <div class="tc-dashboard-actions">
-          <button type="button" id="btnNewAnalysis" class="tc-btn-outline">
+          <button type="button" id="btnNewAnalysis" class="tc-btn-outline" data-nav-target="analyzer" onclick="if(window.navigateTo) navigateTo('analyzer'); return false;">
             <i class="bi bi-plus-lg"></i>
             <span>New Analysis</span>
           </button>

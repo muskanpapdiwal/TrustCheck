@@ -186,6 +186,105 @@ input, textarea, select {
   color: var(--tc-text-primary);
 }
 
+.tc-nav-link.active {
+  color: var(--tc-text-primary);
+  font-weight: 600;
+  position: relative;
+}
+
+.tc-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--tc-genuine);
+  border-radius: 2px;
+}
+
+/* Mobile Nav Toggle */
+.tc-mobile-nav-toggle {
+  display: none;
+  background: #FFFFFF;
+  border: 1px solid var(--tc-border-hairline);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  color: var(--tc-text-primary);
+  font-size: 1.35rem;
+  cursor: pointer;
+  transition: all var(--tc-transition-fast);
+}
+
+.tc-mobile-nav-toggle:hover {
+  background: #F1F1EC;
+  border-color: #D1D1CB;
+}
+
+/* Mobile Nav Menu Dropdown */
+.tc-mobile-nav-menu {
+  display: none;
+  background: #FFFFFF;
+  border: 1px solid var(--tc-border-hairline);
+  border-radius: var(--tc-radius-card);
+  padding: 1rem;
+  margin-top: 0.75rem;
+  box-shadow: var(--tc-shadow-lg);
+  animation: tcSlideDown 0.2s ease-out;
+}
+
+.tc-mobile-nav-menu.active {
+  display: block;
+}
+
+.tc-mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tc-mobile-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  color: var(--tc-text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all var(--tc-transition-fast);
+}
+
+.tc-mobile-nav-link:hover,
+.tc-mobile-nav-link.active {
+  background: var(--tc-bg-page);
+  color: var(--tc-text-primary);
+  font-weight: 600;
+}
+
+.tc-mobile-nav-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--tc-border-hairline);
+}
+
+@keyframes tcSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Pills and CTAs */
 .tc-btn-primary {
   display: inline-flex;
@@ -1425,7 +1524,9 @@ input, textarea, select {
 /* Responsive tweaks */
 @media (max-width: 768px) {
   .tc-hero-title { font-size: 2.15rem; }
-  .tc-navbar .tc-nav-links { display: none; }
+  .tc-navbar .tc-nav-links { display: none !important; }
+  .tc-nav-actions { display: none !important; }
+  .tc-mobile-nav-toggle { display: inline-flex !important; }
   .tc-analyzer-tabs { flex-direction: column; }
   .tc-tab-pane { padding: 1.25rem 1rem; }
   .tc-card { padding: 1.25rem; }
