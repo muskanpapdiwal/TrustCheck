@@ -35,12 +35,18 @@
         </a>
 
         <div class="tc-nav-links">
+          <a href="#home" class="tc-nav-link" onclick="navigateTo('home')">Home</a>
+          <a href="#dashboard" class="tc-nav-link" onclick="navigateTo('dashboard')"><i class="bi bi-pie-chart me-1"></i> Dashboard</a>
           <a href="#features" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">How It Works</a>
           <a href="#bento" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">Features</a>
           <a href="#faq" class="tc-nav-link" onclick="if(window.location.hash!=='#home') navigateTo('home')">FAQ</a>
         </div>
 
-        <div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="#dashboard" class="tc-btn-outline" onclick="navigateTo('dashboard')">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>View Dashboard</span>
+          </a>
           <a href="#analyzer" class="tc-btn-dark-pill" onclick="if(window.location.hash!=='#home') navigateTo('home')">
             <i class="bi bi-search"></i>
             <span>Analyze Reviews</span>
@@ -53,7 +59,7 @@
   <!-- ========================================================================
        PAGE 1: HOME / ANALYZER
        ======================================================================== -->
-  <main id="page-home" class="tc-page active">
+  <main id="page-home" class="tc-page {% if not data %}active{% endif %}">
 
     <!-- 1. Hero Section -->
     <section class="tc-hero-section">
@@ -400,7 +406,7 @@
   <!-- ========================================================================
        PAGE 2: RESULTS DASHBOARD
        ======================================================================== -->
-  <main id="page-dashboard" class="tc-page">
+  <main id="page-dashboard" class="tc-page {% if data %}active{% endif %}">
     <div class="tc-container">
       
       <!-- Top Bar -->
@@ -760,6 +766,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Injected Server Analysis Data (for direct form submit or /dashboard access) -->
+  <script>
+    window.INITIAL_DATA = {% if data %}{{ data | tojson }}{% else %}null{% endif %};
+  </script>
 
   <!-- Main Modular App Script -->
   <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>

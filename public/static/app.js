@@ -260,6 +260,41 @@ function updateSemicircularGauge(score) {
   }
 }
 
+export function formatSingleReviewAsDashboard(forensics) {
+  const isFake = forensics.label === 'Fake';
+  const isSuspicious = forensics.classification === 'Suspicious';
+  const isGenuine = forensics.label === 'Genuine' && !isSuspicious;
+
+  return {
+    total: 1,
+    genuine_count: isGenuine ? 1 : 0,
+    fake_count: isFake ? 1 : 0,
+    pct_genuine: isGenuine ? 100 : 0,
+    pct_suspicious: isSuspicious ? 100 : 0,
+    pct_fake: isFake ? 100 : 0,
+    trust_score: forensics.trust_score || forensics.authenticity || (isGenuine ? 92 : (isSuspicious ? 55 : 15)),
+    platform_avg_rating: forensics.rating || (isGenuine ? 5.0 : (isFake ? 5.0 : 3.0)),
+    avg_rating_genuine: isGenuine ? (forensics.rating || 5.0) : null,
+    rating_distribution: {
+      genuine: [0, 0, 0, 0, isGenuine ? 1 : 0],
+      fake: [0, 0, 0, 0, !isGenuine ? 1 : 0]
+    },
+    top_keywords: {
+      genuine: isGenuine ? [[forensics.language_pattern || 'Natural Nuance', 1]] : [],
+      fake: !isGenuine ? [[forensics.language_pattern || 'Repetitive Pattern', 1]] : []
+    },
+    reviews: [{
+      text: forensics.text,
+      rating: forensics.rating || (isGenuine ? 5 : (isFake ? 5 : 3)),
+      date: 'Just now',
+      label: forensics.label,
+      raw_label: forensics.raw_label,
+      confidence: forensics.confidence,
+      forensics: forensics
+    }]
+  };
+}
+
 // ============================================================================
 // 7. Dashboard Rendering & Charts
 // ============================================================================
@@ -274,18 +309,19 @@ export function renderDashboard() {
   const singleCard = document.getElementById('dashSingleCard');
   const batchGrid = document.getElementById('dashBatchGrid');
 
+  // ALWAYS KEEP THE FULL DASHBOARD VISIBLE!
+  if (batchGrid) batchGrid.style.display = 'grid';
+
   if (isSingle) {
     if (productCard) productCard.style.display = 'none';
-    if (singleCard) singleCard.style.display = 'block';
-    if (batchGrid) batchGrid.style.display = 'none';
-
-    renderSingleReviewDashboard(data);
-    return;
+    if (singleCard) {
+      singleCard.style.display = 'block';
+      const singleForensics = (data.reviews && data.reviews[0] && data.reviews[0].forensics) ? data.reviews[0].forensics : data;
+      renderSingleReviewDashboard(singleForensics);
+    }
+  } else {
+    if (singleCard) singleCard.style.display = 'none';
   }
-
-  // Batch Mode
-  if (singleCard) singleCard.style.display = 'none';
-  if (batchGrid) batchGrid.style.display = 'grid';
 
   // Product Header Card
   if (productCard) {
@@ -821,9 +857,16 @@ async function loadDefaultBenchmarkDashboard() {
 // 11. Event Listeners & Wire-up
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Hash listener
-  window.addEventListener('hashchange', handleHashChange);
-  handleHashChange();
+  // If server injected initial analysis data (e.g. from form submission or /dashboard route):
+  if (window.INITIAL_DATA) {
+    appState.analysisResult = window.INITIAL_DATA;
+    appState.isSingleReviewMode = (window.INITIAL_DATA.total === 1);
+    navigateTo('dashboard');
+  } else {
+    // Hash listener
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+  }
 
   // Tab Switching
   const tabs = document.querySelectorAll('.tc-tab-btn');
@@ -1007,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           const forensics = await runWithMultiStepLoading(apiService.analyzeSingle(text));
           appState.isSingleReviewMode = true;
-          appState.analysisResult = forensics;
+          appState.analysisResult = formatSingleReviewAsDashboard(forensics);
           appState.productInfo = null;
           navigateTo('dashboard');
         } catch (err) {
