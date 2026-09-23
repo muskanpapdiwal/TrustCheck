@@ -48,6 +48,10 @@ desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Extracted presentation assets
+extracted_template/
+slide_backgrounds/
 *~
 *.sublime-project
 *.sublime-workspace

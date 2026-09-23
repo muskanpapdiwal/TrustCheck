@@ -50,7 +50,7 @@ export function navigateTo(target) {
   target = target.replace(/^#/, '').trim();
 
   const isDashboard = (target === 'dashboard');
-  const isHomeSection = ['features', 'bento', 'faq', 'analyzer'].includes(target);
+  const isHomeSection = ['features', 'bento', 'analyzer'].includes(target);
 
   const homePage = document.getElementById('page-home');
   const dashPage = document.getElementById('page-dashboard');
@@ -1323,16 +1323,6 @@ function initApp() {
       navigateTo('home');
     });
   }
-
-  // FAQ Accordion
-  document.querySelectorAll('.tc-faq-question').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.tc-faq-item');
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.tc-faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
-    });
-  });
 }
 
 // Resilient startup: invoke immediately if DOM is already parsed, or on DOMContentLoaded

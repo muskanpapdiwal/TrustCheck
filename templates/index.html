@@ -40,15 +40,10 @@
           <a href="#dashboard" class="tc-nav-link" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;"><i class="bi bi-pie-chart me-1"></i> Dashboard</a>
           <a href="#features" class="tc-nav-link" data-nav-target="features" onclick="if(window.navigateTo) navigateTo('features'); return false;">How It Works</a>
           <a href="#bento" class="tc-nav-link" data-nav-target="bento" onclick="if(window.navigateTo) navigateTo('bento'); return false;">Features</a>
-          <a href="#faq" class="tc-nav-link" data-nav-target="faq" onclick="if(window.navigateTo) navigateTo('faq'); return false;">FAQ</a>
         </div>
 
         <!-- Desktop Action Buttons -->
         <div class="tc-nav-actions d-none d-md-flex align-items-center gap-2">
-          <a href="#dashboard" class="tc-btn-outline" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;">
-            <i class="bi bi-graph-up-arrow"></i>
-            <span>View Dashboard</span>
-          </a>
           <a href="#analyzer" class="tc-btn-dark-pill" data-nav-target="analyzer" onclick="if(window.navigateTo) navigateTo('analyzer'); return false;">
             <i class="bi bi-search"></i>
             <span>Analyze Reviews</span>
@@ -76,14 +71,8 @@
           <a href="#bento" class="tc-mobile-nav-link" data-nav-target="bento" onclick="if(window.navigateTo) navigateTo('bento'); return false;">
             <i class="bi bi-grid me-2"></i> Features
           </a>
-          <a href="#faq" class="tc-mobile-nav-link" data-nav-target="faq" onclick="if(window.navigateTo) navigateTo('faq'); return false;">
-            <i class="bi bi-question-circle me-2"></i> FAQ
-          </a>
         </div>
         <div class="tc-mobile-nav-ctas">
-          <a href="#dashboard" class="tc-btn-outline text-center" data-nav-target="dashboard" onclick="if(window.navigateTo) navigateTo('dashboard'); return false;">
-            <i class="bi bi-graph-up-arrow me-1"></i> View Dashboard
-          </a>
           <a href="#analyzer" class="tc-btn-dark-pill text-center" data-nav-target="analyzer" onclick="if(window.navigateTo) navigateTo('analyzer'); return false;">
             <i class="bi bi-search me-1"></i> Analyze Reviews
           </a>
@@ -364,58 +353,7 @@
       </div>
     </section>
 
-    <!-- 5. FAQ Accordion & Footer -->
-    <section id="faq" class="tc-section">
-      <div class="tc-container">
-        <div class="tc-section-header">
-          <div class="tc-section-tag">FAQ</div>
-          <h2 class="tc-section-title">Frequently Asked Questions</h2>
-          <p class="tc-section-desc">Everything you need to know about TrustCheck's detection and scoring model.</p>
-        </div>
 
-        <div class="tc-faq-wrap">
-          <div class="tc-faq-item open">
-            <button type="button" class="tc-faq-question">
-              <span>How does TrustCheck detect fake reviews?</span>
-              <i class="bi bi-chevron-down"></i>
-            </button>
-            <div class="tc-faq-answer">
-              TrustCheck uses a machine learning model trained on large-scale e-commerce review corpora. It extracts lexical n-grams, evaluates structural repetition, and cross-references star ratings against written sentiment to identify telltale signs of bot-generated and astroturfed reviews.
-            </div>
-          </div>
-
-          <div class="tc-faq-item">
-            <button type="button" class="tc-faq-question">
-              <span>Which websites can I scrape automatically?</span>
-              <i class="bi bi-chevron-down"></i>
-            </button>
-            <div class="tc-faq-answer">
-              Our automated scraper supports Amazon and Flipkart product links. Because live e-commerce sites employ strict bot prevention, you can always paste text directly or upload any CSV file if a URL is blocked.
-            </div>
-          </div>
-
-          <div class="tc-faq-item">
-            <button type="button" class="tc-faq-question">
-              <span>What does the Trust Score represent?</span>
-              <i class="bi bi-chevron-down"></i>
-            </button>
-            <div class="tc-faq-answer">
-              The Trust Score is a composite 0–100 index. Scores of 70 and above indicate high authenticity. Scores between 40 and 69 suggest mixed or promotional patterns, while scores below 40 highlight significant fake review clusters.
-            </div>
-          </div>
-
-          <div class="tc-faq-item">
-            <button type="button" class="tc-faq-question">
-              <span>Is my data private?</span>
-              <i class="bi bi-chevron-down"></i>
-            </button>
-            <div class="tc-faq-answer">
-              Yes. All analysis is executed inside our local server environment. We do not store your uploaded review text, track user identity, or monetize private data.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Footer -->
     <footer class="tc-footer">
