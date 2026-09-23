@@ -9,11 +9,13 @@
 - Department of Computer Science & Engineering, BIT Mesra, Jaipur Campus
 - **TrustCheck: Fake Review Detection & Trust Score System**
 - Mid-Semester Project Presentation
-- Student Name(s) & Roll Number(s)
-- Under the Supervision of Dr. / Mr. [Guide Name]
+- **Presented By**:
+  - Muskan Jain [BCA/25014/14]
+  - Disha Kodasia [BCA/25006/24]
+- **Under the Supervision of**: Mr. Santosh Kumar Sharma (Assistant Professor, Dept. of CSE)
 
 ### What to say to the teacher (Speaking Script):
-> *"Good morning respected teachers and panel members. Today, my team and I are presenting our mid-semester project titled **TrustCheck: Fake Review Detection and Trust Score System**, completed under the guidance of Dr./Mr. [Guide's Name].*
+> *"Good morning respected teachers and panel members. Today, we are presenting our mid-semester project titled **TrustCheck: Fake Review Detection and Trust Score System**, completed under the supervision of Mr. Santosh Kumar Sharma.*
 >
 > *In this project, we use Machine Learning and Natural Language Processing to automatically detect fake customer reviews on e-commerce platforms and calculate an honest Trust Score for buyers."*
 
@@ -27,11 +29,11 @@
 3. Dataset Description
 4. Design and Methodology
 5. Research Contributions
-6. Conclusions & Next Steps
+6. Conclusions & Completed Work
 7. References
 
 ### What to say to the teacher:
-> *"Here is a quick overview of our presentation today. We will cover the background of fake reviews, our problem statement and objectives, the dataset used for training, our machine learning methodology, what we have built so far, and our conclusions and future plans for the final semester."*
+> *"Here is a quick overview of our presentation today. We will cover the background of fake reviews, our problem statement and objectives, the dataset used for training, our machine learning methodology, what we have built so far, and the complete set of results and milestones achieved."*
 
 ---
 
@@ -128,23 +130,25 @@
 
 ---
 
-## Slide 8: Conclusions
+## Slide 8: Conclusions & Completed Work
 
 ### What is on the slide:
-- **What We Have Completed (Mid-Sem)**:
-  - Trained an AI model achieving **89.4% accuracy**.
-  - Formulated the mathematical Trust Score metric.
-  - Built and deployed the full web application on Vercel.
-  - Demonstrated that fake reviews inflate ratings by **0.5 to 0.9 stars**.
-- **Plan for End-Sem (Future Work)**:
-  - Test lightweight Transformer models (DistilBERT) for sarcastic reviews.
-  - Add timeline charts to flag review bursts (e.g., 50 reviews posted in 1 hour).
-  - Create a Chrome extension so buyers can see Trust Scores directly on Amazon.
+- **ML & Model Outcomes Completed**:
+  - Processed and balanced **40,432 labeled reviews**.
+  - Champion Logistic Regression model achieved **89.4% accuracy** (outperforming Naive Bayes at 85.2%).
+  - Formulated and verified the mathematical **Trust Score formula (0 to 100)**.
+  - Sub-50 millisecond inference speed with low memory footprint (~12MB).
+- **System & Deployment Completed**:
+  - Implemented the **Dual-Rating Recalculation** engine.
+  - Built **4-Vector Review Forensics** (language, template, behavioral anomalies).
+  - Developed full Python Flask backend and Next.js modern frontend.
+  - Multi-channel review ingestion (paste, CSV file upload, and URL scraping).
+  - Deployed live and functional on Vercel (`trust-check-rouge.vercel.app`).
 
 ### What to say to the teacher:
-> *"To conclude our mid-semester progress: we have successfully trained our machine learning model with 89.4% accuracy, verified that fake reviews inflate product scores by nearly a whole star, and deployed a live working web application.*
+> *"To conclude our project work: we have accomplished both our algorithmic and software milestones. On the machine learning side, we processed over 40,000 reviews and achieved 89.4% accuracy with our champion model, along with a validated Trust Score formula.*
 >
-> *For our final semester, we plan to experiment with Transformer models like DistilBERT, add review burst detection over time, and build a Chrome browser extension for 1-click shopping protection."*
+> *On the software side, we implemented the dual-rating recalculation engine, built the 4-vector forensics classifier, and fully deployed a responsive, live web application that allows buyers to evaluate reviews in real-time."*
 
 ---
 
@@ -166,10 +170,14 @@
 
 ### What is on the slide:
 - **Thank you**
-- Project Title & Team Details
-- Guide: Dr. / Mr. [Name of Guide], Assistant Professor, Dept. of CSE
-- Live App Link & GitHub Link
-- *"We welcome any questions and suggestions!"*
+- **Project Team**:
+  - Muskan Jain [BCA/25014/14]
+  - Disha Kodasia [BCA/25006/24]
+- **Under the Supervision of**: Mr. Santosh Kumar Sharma (Assistant Professor, Dept. of CSE, BIT Mesra, Jaipur)
+- **Project Links & Resources**:
+  - Live Web Application: `https://trust-check-rouge.vercel.app/`
+  - Real-Time Dashboard: `https://trust-check-rouge.vercel.app/dashboard`
+  - Source Code Repository: `https://github.com/muskanpapdiwal/TrustCheck`
 
 ### What to say to the teacher:
-> *"Thank you respected teachers. We now invite any questions, suggestions, and feedback to improve our project for the final semester."*
+> *"Thank you respected teachers and panel members. Our live working system and full source code are available at the links shown on screen."*
